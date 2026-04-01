@@ -6,7 +6,7 @@
   --bg-card: #1a1a2e;
   --bg-card-hover: #22223a;
   --text-primary: #e8e8e8;
-  --text-secondary: #a0a0a0;
+  --text-secondary: #b0b0b0;
   --accent-claude: #d97706;
   --accent-gemini: #4285f4;
   --accent-grok: #1da1f2;
@@ -87,3 +87,51 @@ code {
 .tip-do { border-color: #22c55e; }
 .tip-dont { border-color: #ef4444; }
 .tip-info { border-color: #3b82f6; }
+
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Copy button on code blocks */
+.code-block-wrapper {
+  position: relative;
+}
+.code-block-wrapper .copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #2a2a3e;
+  border: 1px solid #3a3a4e;
+  border-radius: 4px;
+  color: #b0b0b0;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.code-block-wrapper:hover .copy-btn {
+  opacity: 1;
+}
+.code-block-wrapper .copy-btn:hover {
+  background: #3a3a4e;
+  color: #e8e8e8;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

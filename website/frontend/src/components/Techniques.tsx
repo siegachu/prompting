@@ -1,11 +1,14 @@
+import CopyableCode from "./CopyableCode";
+
 export default function Techniques() {
   return (
     <div className="space-y-8">
       <section>
         <h2 className="text-3xl font-bold mb-2">Prompting Techniques</h2>
-        <p className="text-[#a0a0a0]">
-          Research-backed methods ranked by effectiveness. Based on MoE consensus
-          from 5 AI experts (March 2026).
+        <p className="text-[#b0b0b0]">
+          Simple tricks to get better answers from any AI. Think of these as
+          different ways to ask a question — some work better than others
+          depending on what you need.
         </p>
       </section>
 
@@ -17,165 +20,155 @@ export default function Techniques() {
         <div className="space-y-3 text-sm">
           <div className="flex items-start gap-3">
             <span className="text-[#f59e0b] font-mono shrink-0">START</span>
-            <span className="text-[#a0a0a0]">Is the task simple with a clear answer?</span>
+            <span className="text-[#b0b0b0]">Is it a simple, straightforward question?</span>
           </div>
           <div className="ml-8 flex items-start gap-3">
             <span className="text-[#22c55e] font-mono shrink-0">YES &rarr;</span>
-            <span><strong>Zero-shot.</strong> Just ask directly. No special technique needed.</span>
+            <span><strong>Just ask.</strong> No tricks needed. &quot;What&apos;s the capital of France?&quot;</span>
           </div>
           <div className="ml-8 flex items-start gap-3">
             <span className="text-[#ef4444] font-mono shrink-0">NO &nbsp;&rarr;</span>
-            <span className="text-[#a0a0a0]">Does it require multi-step reasoning?</span>
+            <span className="text-[#b0b0b0]">Does it need thinking through multiple steps?</span>
           </div>
           <div className="ml-16 flex items-start gap-3">
             <span className="text-[#22c55e] font-mono shrink-0">YES &rarr;</span>
-            <span>Using a <strong>reasoning model</strong> (Claude Opus, o3, Gemini Thinking)?</span>
+            <span>Are you using a &quot;thinking&quot; model (Claude Opus, o3, Gemini Thinking)?</span>
           </div>
           <div className="ml-24 flex items-start gap-3">
             <span className="text-[#22c55e] font-mono shrink-0">YES &rarr;</span>
-            <span><strong>Just say &quot;think deeply.&quot;</strong> Reasoning models do CoT internally.</span>
+            <span><strong>Just say &quot;think carefully about this.&quot;</strong> These models already reason on their own.</span>
           </div>
           <div className="ml-24 flex items-start gap-3">
             <span className="text-[#ef4444] font-mono shrink-0">NO &nbsp;&rarr;</span>
-            <span><strong>Chain-of-Thought.</strong> Add &quot;Think step by step&quot; (+10-20% accuracy).</span>
+            <span><strong>Say &quot;think step by step.&quot;</strong> This alone makes answers 10-20% more accurate.</span>
           </div>
           <div className="ml-16 flex items-start gap-3">
             <span className="text-[#ef4444] font-mono shrink-0">NO &nbsp;&rarr;</span>
-            <span className="text-[#a0a0a0]">Do you need a specific output format?</span>
+            <span className="text-[#b0b0b0]">Do you want the answer in a specific format?</span>
           </div>
           <div className="ml-24 flex items-start gap-3">
             <span className="text-[#22c55e] font-mono shrink-0">YES &rarr;</span>
-            <span><strong>Few-shot (2-3 examples).</strong> Show the format you want.</span>
+            <span><strong>Show 2-3 examples</strong> of what you want. The AI will copy the pattern.</span>
           </div>
           <div className="ml-24 flex items-start gap-3">
             <span className="text-[#ef4444] font-mono shrink-0">NO &nbsp;&rarr;</span>
-            <span><strong>Persona prompting.</strong> &quot;You are a [role]. Analyze using [methodology].&quot;</span>
+            <span><strong>Give it a role.</strong> &quot;You are a friendly teacher. Explain this to me.&quot;</span>
           </div>
         </div>
       </section>
 
       {/* Technique Cards */}
       <section className="space-y-6">
-        {/* Zero-shot */}
         <TechniqueCard
-          name="Zero-Shot Prompting"
-          effectiveness="Baseline"
-          bestFor="Simple, well-defined tasks"
-          description="Just ask directly. No examples, no special instructions. This is your default starting point — only escalate to more complex techniques when zero-shot isn't enough."
-          example={`Summarize the key risks in this 10-K filing:\n[paste filing text]`}
-          doList={["Start here for every new task", "Be specific about what you want", "Specify output format if needed"]}
-          dontList={["Add unnecessary complexity", "Use CoT for simple factual lookups"]}
+          name="Just Ask (Zero-Shot)"
+          effectiveness="Starting point"
+          bestFor="Simple questions with clear answers"
+          description="Just type your question normally. No tricks needed. This is how most people use AI — and it works great for everyday questions. Only try fancier techniques when this doesn't give you what you want."
+          example={`What's a good birthday gift for a 10-year-old who likes science?`}
+          doList={["Start here for every question", "Be clear about what you want", "Mention the format if it matters (\"give me a list\")"]}
+          dontList={["Overthink simple questions", "Add unnecessary instructions for basic stuff"]}
         />
 
-        {/* Chain of Thought */}
         <TechniqueCard
-          name="Chain-of-Thought (CoT)"
-          effectiveness="+10-20% accuracy"
-          bestFor="Math, logic, multi-step reasoning"
-          description={`Add "Think step by step" or "Let's work through this carefully." Forces the model to show intermediate reasoning, catching errors early. Skip this for reasoning models (Claude Opus, o3) — they already do it internally.`}
-          example={`A company has $50M revenue, 30% margins, and 15x P/E.\nWhat is the implied stock price if there are 10M shares outstanding?\n\nThink step by step.`}
-          doList={["Use for math, logic, and analysis tasks", "Use on standard models (Sonnet, GPT-4o, Gemini Flash)", "Let the model show its work"]}
-          dontList={["Use on reasoning models (they do it internally)", "Use for simple factual questions", "Expect it to fix knowledge gaps"]}
+          name="Think Step by Step (Chain-of-Thought)"
+          effectiveness="+10-20% more accurate"
+          bestFor="Math problems, comparing options, planning"
+          description={`Just add "think step by step" to your question. This forces the AI to show its work instead of jumping to an answer — like asking a student to show their math. You can catch mistakes along the way. Skip this on "thinking" models like Claude Opus — they already do it automatically.`}
+          example={`I'm choosing between two cars:\n- Car A: $30,000, gets 35 mpg, $200/mo insurance\n- Car B: $25,000, gets 25 mpg, $250/mo insurance\n\nI drive 15,000 miles a year and gas is $3.50/gallon.\nWhich car is cheaper over 5 years?\n\nThink step by step.`}
+          doList={["Use for math, comparisons, and decisions", "Use on regular models (Sonnet, GPT-4o, Gemini Flash)", "Let the AI show its work so you can check it"]}
+          dontList={["Use on thinking models (they already do this)", "Use for simple facts like \"what year was X born\"", "Expect it to know things it doesn't"]}
         />
 
-        {/* Few-shot */}
         <TechniqueCard
-          name="Few-Shot Prompting"
-          effectiveness="+15-30% accuracy"
-          bestFor="Specific formats, domain tasks, classification"
-          description="Show 2-5 examples of input/output pairs. The model learns the pattern and applies it consistently. Most effective when your desired output format is non-obvious."
-          example={`Classify these headlines as BULLISH, BEARISH, or NEUTRAL:\n\nExample: "Apple beats Q4 estimates by 15%" → BULLISH\nExample: "Fed holds rates steady, signals patience" → NEUTRAL\nExample: "Major retailer files Chapter 11" → BEARISH\n\nNow classify:\n"Tesla deliveries miss estimates by 3%"\n"Microsoft announces $60B buyback program"\n"GDP growth revised down to 1.2%"`}
-          doList={["Use 3-5 diverse examples", "Cover edge cases in examples", "Match the complexity of your actual task"]}
-          dontList={["Use trivial or redundant examples", "Include more than 7 examples (diminishing returns)", "Use examples that contradict each other"]}
+          name="Show Me What You Want (Few-Shot)"
+          effectiveness="+15-30% more accurate"
+          bestFor="Getting a specific style, format, or tone"
+          description="Show the AI 2-3 examples of what good output looks like, then ask it to do the same thing. It's like showing a new employee examples of past work before asking them to do something similar."
+          example={`Write short product descriptions in this style:\n\nExample: "Classic White Tee — Soft cotton, relaxed fit. The one you'll reach for every morning. $29"\nExample: "Weekend Joggers — Stretchy, breathable, looks good at brunch or on the couch. $55"\n\nNow write one for:\n- A waterproof hiking jacket, $120\n- A leather laptop bag, $89`}
+          doList={["Use 2-5 examples that show variety", "Make sure examples match the difficulty of your real task", "Include edge cases if they matter"]}
+          dontList={["Use examples that contradict each other", "Use more than 7 examples (you hit diminishing returns)", "Use examples way simpler than your actual task"]}
         />
 
-        {/* Persona */}
         <TechniqueCard
-          name="Persona / Role Prompting"
-          effectiveness="+14-18% on domain tasks"
-          bestFor="Domain expertise, consistent tone, specialized analysis"
-          description='Assign a specific role with relevant expertise. "You are a senior equity analyst with 15 years of experience" produces fundamentally different output than a generic query. Can stack multiple personas for different perspectives.'
-          example={`You are a senior credit analyst at a major rating agency.\nYou specialize in high-yield corporate bonds.\n\nAnalyze the following company's credit profile:\n- Revenue: $200M (declining 5% YoY)\n- Debt/EBITDA: 4.5x\n- Interest coverage: 2.1x\n- Industry: Retail\n\nProvide a credit rating recommendation with justification.`}
-          doList={["Be specific about expertise level and domain", "Include methodology constraints", "Stack personas for multi-perspective analysis"]}
-          dontList={["Use vague personas (\"expert\")", "Assign personas that conflict with the task", "Expect the persona to add factual knowledge"]}
+          name="Give It a Role (Persona Prompting)"
+          effectiveness="+14-18% on specialized topics"
+          bestFor="Getting expert-level answers, matching a specific tone"
+          description={`Tell the AI to pretend it's a specific type of expert. "You are a friendly pediatrician" gives very different health advice than "you are a medical researcher." The more specific the role, the better the answer.`}
+          example={`You are a patient, experienced home inspector\nwith 20 years in the business.\n\nI'm buying my first house and the inspection report\nmentions "minor foundation cracks." Should I be worried?\nWhat questions should I ask the seller?\nExplain like you're talking to someone who knows\nnothing about houses.`}
+          doList={["Be specific about the role (\"experienced pediatrician\" not just \"doctor\")", "Mention the audience (\"explain to a beginner\")", "Combine roles for different perspectives"]}
+          dontList={["Use vague roles (\"expert\")", "Expect the role to give it new facts it doesn't know", "Assign conflicting roles in the same prompt"]}
         />
 
-        {/* Tree of Thought */}
         <TechniqueCard
-          name="Tree-of-Thought (ToT)"
-          effectiveness="+83% on puzzle tasks (90% vs 7%)"
-          bestFor="Complex problems with multiple solution paths"
-          description="Explore multiple reasoning paths simultaneously, evaluate each, and pursue the most promising ones. Like a chess player considering multiple moves ahead. Requires multiple LLM calls but dramatically improves accuracy on hard problems."
-          example={`Consider this strategic decision from 3 different angles.\nFor each angle, reason through the implications, then evaluate\nwhich approach is strongest.\n\nDecision: Should we acquire CompanyX for $500M?\n\nAngle 1: Financial (DCF, synergies, payback period)\nAngle 2: Strategic (market position, competitive moat)\nAngle 3: Risk (integration, cultural, regulatory)\n\nAfter exploring all 3, recommend a path forward.`}
-          doList={["Use for high-stakes decisions", "Explicitly ask for multiple paths", "Request evaluation of each path"]}
-          dontList={["Use for simple questions (massive overkill)", "Expect it in a single API call", "Skip the evaluation/synthesis step"]}
+          name="Explore Multiple Angles (Tree-of-Thought)"
+          effectiveness="+83% on complex problems"
+          bestFor="Big decisions with multiple factors to weigh"
+          description="Ask the AI to consider a problem from several different angles, evaluate each one, then combine them into a recommendation. It's like asking your friend to think about a decision from the money side, the lifestyle side, and the risk side before giving advice."
+          example={`I'm deciding whether to accept a job offer in a new city.\nLook at this from 3 angles:\n\nAngle 1: Money (salary difference, cost of living,\n  moving expenses)\nAngle 2: Career (growth potential, industry trends,\n  resume impact)\nAngle 3: Personal (distance from family, city lifestyle,\n  partner's job options)\n\nAfter exploring all 3, give me your overall recommendation.`}
+          doList={["Use for important life decisions", "Ask for at least 3 different perspectives", "Ask it to weigh the perspectives against each other"]}
+          dontList={["Use for simple questions (way overkill)", "Skip the final synthesis step", "Expect it to know personal preferences — tell it what matters most to you"]}
         />
 
-        {/* Self-Consistency */}
         <TechniqueCard
-          name="Self-Consistency"
-          effectiveness="-15-20% hallucination"
-          bestFor="Reliability-critical tasks, fact verification"
-          description="Generate the same answer 3-5 times, then take the majority vote. Inconsistent answers reveal uncertainty. If the model gives different answers each time, the question may be ambiguous or beyond its knowledge."
-          example={`[Run this prompt 3 times with temperature 0.7]\n\nBased on the financial data provided, what is the\nfair value estimate for this stock?\nShow your work.\n\n[Then compare: if all 3 agree → high confidence.\nIf 2/3 agree → medium confidence.\nIf all differ → low confidence, need more data.]`}
-          doList={["Use for critical financial calculations", "Set temperature > 0 to get variation", "Report confidence based on agreement"]}
-          dontList={["Use for creative tasks (variation is expected)", "Run fewer than 3 samples", "Ignore disagreements"]}
+          name="Ask 3 Times and Compare (Self-Consistency)"
+          effectiveness="-15-20% fewer wrong answers"
+          bestFor="When you need to be really sure the answer is right"
+          description="Ask the same question 3-5 times in separate chats and see if you get the same answer each time. If all 3 agree, you can trust it. If they give different answers each time, the AI is unsure and you should verify elsewhere."
+          example={`[Ask this same question in 3 separate chats]\n\nBased on these symptoms — persistent dry cough\nfor 3 weeks, no fever, worse at night — what are\nthe most likely causes? List them in order of\nprobability.\n\n[Compare: if all 3 chats say the same top causes\n→ high confidence. If they disagree → see a doctor.]`}
+          doList={["Use when accuracy really matters", "Run at least 3 separate chats", "Pay attention when answers disagree"]}
+          dontList={["Use for creative tasks (different answers are normal)", "Run fewer than 3 tries", "Ignore it when the answers conflict — that means the AI is guessing"]}
         />
 
-        {/* Extended Thinking */}
         <TechniqueCard
-          name="Extended Thinking / Deep Reasoning"
-          effectiveness="Logarithmic improvement with token budget"
-          bestFor="Complex analysis, architecture decisions, research"
-          description='Modern reasoning models (Claude Opus, o3, Gemini Thinking) have built-in chain-of-thought. Instead of "think step by step," give high-level instructions like "think deeply about this" and let the model allocate its reasoning budget. The model reasons internally before responding.'
-          example={`Think deeply about the architectural trade-offs.\n\nWe need to migrate from a monolithic Django app to\nmicroservices. The app handles:\n- 10K requests/sec at peak\n- 50 database tables with complex joins\n- Real-time WebSocket connections\n- Background job processing\n\nWhat is the optimal migration strategy?`}
-          doList={["Use with reasoning models (Opus, o3, Gemini Thinking)", "Give high-level direction, not prescriptive steps", "Budget 1,024+ tokens for thinking"]}
-          dontList={["Add explicit \"step by step\" (redundant)", "Micromanage the reasoning process", "Use on non-reasoning models (no effect)"]}
+          name="Let It Think Deeply (Extended Thinking)"
+          effectiveness="Better answers on hard problems"
+          bestFor="Complex questions that need real analysis"
+          description={`Some newer AI models (Claude Opus, OpenAI o3, Gemini Thinking) can "think" internally before answering. Instead of telling them exactly how to reason, just say "think carefully" or "think deeply" and let them figure out the best approach. It's like giving someone time to really think before they answer.`}
+          example={`Think carefully about this.\n\nI have $50,000 in savings, $30,000 in student loans\nat 5% interest, and my employer matches 401k\ncontributions up to 5% of my $70,000 salary.\n\nWhat's the smartest order to use my money?\nConsider the math but also real-life factors.`}
+          doList={["Use with thinking models (Claude Opus, o3, Gemini Thinking)", "Give the big picture, let the AI figure out the details", "Use for complex decisions, tricky problems, or detailed analysis"]}
+          dontList={["Say \"think step by step\" (redundant — thinking models do this on their own)", "Micromanage how it should think", "Use on regular models (they won't think deeper, they'll just say \"okay\")"]}
         />
 
-        {/* Structured Output */}
         <TechniqueCard
-          name="Structured Output (XML / JSON)"
-          effectiveness="Consistent, parseable results"
-          bestFor="API integration, data extraction, programmatic use"
-          description="Tell the model exactly what structure to return. Claude prefers XML tags. ChatGPT has native JSON mode. Gemini works with both. This eliminates ambiguity and makes outputs machine-readable."
-          example={`Extract the following from this earnings call transcript.\nReturn as XML:\n\n<analysis>\n  <revenue_guidance>\n    <amount>number</amount>\n    <direction>up|down|flat</direction>\n    <confidence>high|medium|low</confidence>\n  </revenue_guidance>\n  <key_risks>\n    <risk>description</risk>\n  </key_risks>\n  <sentiment>bullish|bearish|neutral</sentiment>\n</analysis>`}
-          doList={["Use XML tags for Claude", "Use JSON mode for ChatGPT (response_format)", "Include field descriptions in the schema"]}
-          dontList={["Mix XML and JSON in same prompt", "Leave field types ambiguous", "Expect perfect JSON without JSON mode (ChatGPT)"]}
+          name="Ask for a Specific Format (Structured Output)"
+          effectiveness="Consistent, organized answers"
+          bestFor="Getting clean data, filling templates, organized lists"
+          description="Tell the AI exactly how to organize its answer. Want a table? Ask for a table. Want bullet points with headers? Say so. Want it to fill in a template? Paste the template. This prevents rambling and makes answers easier to use."
+          example={`Compare these 3 phones for me in a table with columns:\nPhone Name | Price | Battery Life | Camera Quality | Best For\n\niPhone 16\nSamsung Galaxy S25\nGoogle Pixel 9`}
+          doList={["Ask for tables, lists, or specific formats by name", "Paste a template if you have one", "Be specific about what columns, sections, or categories you want"]}
+          dontList={["Leave the format up to the AI when you have a preference", "Ask for overly complicated formats with 20 columns", "Forget to mention the format and then complain about the layout"]}
         />
       </section>
 
       {/* Comparison Table */}
       <section>
-        <h3 className="text-2xl font-bold mb-4">Technique Comparison Matrix</h3>
+        <h3 className="text-2xl font-bold mb-4">Quick Comparison</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse comparison-table">
             <thead>
               <tr>
                 <th className="text-left p-3 border border-[#2a2a3e]">Technique</th>
-                <th className="text-center p-3 border border-[#2a2a3e]">Accuracy Boost</th>
-                <th className="text-center p-3 border border-[#2a2a3e]">API Calls</th>
-                <th className="text-center p-3 border border-[#2a2a3e]">Complexity</th>
-                <th className="text-center p-3 border border-[#2a2a3e]">Best Models</th>
+                <th className="text-center p-3 border border-[#2a2a3e]">How Much It Helps</th>
+                <th className="text-center p-3 border border-[#2a2a3e]">Effort</th>
+                <th className="text-center p-3 border border-[#2a2a3e]">Works On</th>
               </tr>
             </thead>
             <tbody>
               {[
-                ["Zero-shot", "Baseline", "1", "Low", "All"],
-                ["Chain-of-Thought", "+10-20%", "1", "Low", "Standard models"],
-                ["Few-shot", "+15-30%", "1", "Medium", "All"],
-                ["Persona", "+14-18%", "1", "Low", "All"],
-                ["Tree-of-Thought", "+83% (puzzles)", "3-5", "High", "All"],
-                ["Self-Consistency", "-15-20% halluc.", "3-5", "Medium", "All"],
-                ["Extended Thinking", "Variable", "1", "Low", "Reasoning models"],
-                ["Structured Output", "Consistency", "1", "Medium", "Claude, GPT-4"],
-              ].map(([tech, boost, calls, complexity, models], i) => (
+                ["Just Ask", "Baseline", "None", "All AIs"],
+                ["Think Step by Step", "+10-20% accuracy", "Add one sentence", "Regular models"],
+                ["Show Examples", "+15-30% accuracy", "Write 2-3 examples", "All AIs"],
+                ["Give It a Role", "+14-18% on expert topics", "Add one sentence", "All AIs"],
+                ["Explore Multiple Angles", "+83% on hard problems", "Write a detailed prompt", "All AIs"],
+                ["Ask 3 Times", "Catches 15-20% more errors", "Run 3 separate chats", "All AIs"],
+                ["Let It Think Deeply", "Varies (often big improvement)", "Add one phrase", "Thinking models only"],
+                ["Ask for a Format", "Much cleaner answers", "Describe the format", "All AIs"],
+              ].map(([tech, boost, effort, models], i) => (
                 <tr key={i} className="border-b border-[#2a2a3e] hover:bg-[#141414]">
                   <td className="p-3 border border-[#2a2a3e] font-medium">{tech}</td>
                   <td className="p-3 border border-[#2a2a3e] text-center text-[#22c55e]">{boost}</td>
-                  <td className="p-3 border border-[#2a2a3e] text-center">{calls}</td>
-                  <td className="p-3 border border-[#2a2a3e] text-center">{complexity}</td>
-                  <td className="p-3 border border-[#2a2a3e] text-center text-[#a0a0a0]">{models}</td>
+                  <td className="p-3 border border-[#2a2a3e] text-center">{effort}</td>
+                  <td className="p-3 border border-[#2a2a3e] text-center text-[#b0b0b0]">{models}</td>
                 </tr>
               ))}
             </tbody>
@@ -185,26 +178,26 @@ export default function Techniques() {
 
       {/* Automated Optimization */}
       <section className="bg-[#1a1a2e] rounded-lg p-6 border border-[#2a2a3e]">
-        <h3 className="text-xl font-bold mb-3">Advanced: Automated Prompt Optimization</h3>
-        <p className="text-[#a0a0a0] mb-4">
-          For production systems, these frameworks can optimize prompts automatically —
-          outperforming manual engineering by ~20%.
+        <h3 className="text-xl font-bold mb-3">For Developers: Auto-Tune Your Prompts</h3>
+        <p className="text-[#b0b0b0] mb-4">
+          If you&apos;re building an app that uses AI, these tools can automatically find
+          the best prompt for your use case — often beating hand-written prompts by ~20%.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { name: "DSPy", desc: "Pipeline compiler for production. Reusable, optimizable prompt modules.", maturity: "High" },
-            { name: "TextGrad", desc: "Instance-level autograd for prompts. Best for hard coding/science tasks.", maturity: "Medium" },
-            { name: "OPRO", desc: "LLM iteratively searches for better prompts. Simple to implement.", maturity: "Medium" },
-            { name: "metaTextGrad", desc: "Meta-optimization: optimizes the optimizer itself. Research frontier.", maturity: "Early" },
+            { name: "DSPy", desc: "Build prompt pipelines that optimize themselves. Best for production apps.", maturity: "Ready to use" },
+            { name: "TextGrad", desc: "Fine-tunes prompts for specific hard tasks. Great for coding and science.", maturity: "Getting there" },
+            { name: "OPRO", desc: "The AI tries different prompts and picks the best one. Easy to set up.", maturity: "Getting there" },
+            { name: "metaTextGrad", desc: "Optimizes the optimizer itself. Cutting-edge research.", maturity: "Experimental" },
           ].map((fw) => (
             <div key={fw.name} className="bg-[#141414] rounded-lg p-4">
               <div className="flex justify-between items-center mb-1">
                 <h4 className="font-bold">{fw.name}</h4>
-                <span className="text-xs px-2 py-0.5 rounded bg-[#2a2a3e] text-[#a0a0a0]">
+                <span className="text-xs px-2 py-0.5 rounded bg-[#2a2a3e] text-[#b0b0b0]">
                   {fw.maturity}
                 </span>
               </div>
-              <p className="text-sm text-[#a0a0a0]">{fw.desc}</p>
+              <p className="text-sm text-[#b0b0b0]">{fw.desc}</p>
             </div>
           ))}
         </div>
@@ -239,24 +232,22 @@ function TechniqueCard({
             {effectiveness}
           </span>
         </div>
-        <p className="text-sm text-[#a0a0a0] mb-1">
+        <p className="text-sm text-[#b0b0b0] mb-1">
           <strong className="text-white">Best for:</strong> {bestFor}
         </p>
-        <p className="text-sm text-[#a0a0a0] mb-4">{description}</p>
+        <p className="text-sm text-[#b0b0b0] mb-4">{description}</p>
 
         {/* Example */}
         <div className="mb-4">
           <p className="text-xs font-semibold text-[#f59e0b] mb-2">EXAMPLE PROMPT</p>
-          <pre className="text-[#e8e8e8]">
-            <code>{example}</code>
-          </pre>
+          <CopyableCode>{example}</CopyableCode>
         </div>
 
         {/* Do / Don't */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="tip-card tip-do">
             <p className="text-xs font-semibold text-[#22c55e] mb-1">DO</p>
-            <ul className="text-sm text-[#a0a0a0] space-y-1">
+            <ul className="text-sm text-[#b0b0b0] space-y-1">
               {doList.map((item, i) => (
                 <li key={i}>+ {item}</li>
               ))}
@@ -264,7 +255,7 @@ function TechniqueCard({
           </div>
           <div className="tip-card tip-dont">
             <p className="text-xs font-semibold text-[#ef4444] mb-1">DON&apos;T</p>
-            <ul className="text-sm text-[#a0a0a0] space-y-1">
+            <ul className="text-sm text-[#b0b0b0] space-y-1">
               {dontList.map((item, i) => (
                 <li key={i}>- {item}</li>
               ))}

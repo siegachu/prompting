@@ -1,0 +1,19 @@
+2026-03-31 21:51:01 [INFO] Tweet #1 (practical, 193 chars):
+2026-03-31 21:51:01 [INFO] Tweet #2 (models, 190 chars):
+2026-03-31 21:51:01 [INFO] Tweet #3 (models, 194 chars):
+2026-03-31 21:51:01 [INFO] Dry run: 3 previewed.
+2026-03-31 21:51:05 [INFO] Tweet #1 (prompting, 176 chars):
+2026-03-31 21:51:46 [INFO] Tweet posted successfully
+2026-03-31 21:51:46 [INFO] Recorded (total: 1)
+2026-03-31 21:51:46 [INFO] Done. 1/1 posted.
+Traceback (most recent call last):
+  File "C:\Users\siega\.claude\projects\prompting\website\scripts\x_poster.py", line 40, in <module>
+    logging.FileHandler(SCRIPTS_DIR / "x_poster.log", encoding="utf-8"),
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\logging\__init__.py", line 1219, in __init__
+    StreamHandler.__init__(self, self._open())
+                                 ~~~~~~~~~~^^
+  File "C:\Python314\Lib\logging\__init__.py", line 1248, in _open
+    return open_func(self.baseFilename, self.mode,
+                     encoding=self.encoding, errors=self.errors)
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\siega\\.claude\\projects\\prompting\\website\\scripts\\x_poster.log'

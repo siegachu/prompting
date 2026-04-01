@@ -1,3 +1,5 @@
+import CopyableCode from "./CopyableCode";
+
 export default function GrokGuide() {
   return (
     <div className="space-y-8">
@@ -5,7 +7,7 @@ export default function GrokGuide() {
         <h2 className="text-3xl font-bold mb-2" style={{ color: "#1da1f2" }}>
           Grok — xAI
         </h2>
-        <p className="text-[#a0a0a0]">
+        <p className="text-[#b0b0b0]">
           Best for: real-time X/Twitter data, current events, unfiltered analysis,
           web search. Models: Grok-4 (flagship with search tools).
         </p>
@@ -22,7 +24,7 @@ export default function GrokGuide() {
           ].map((f) => (
             <div key={f.title} className="bg-[#141414] rounded-lg p-4">
               <h4 className="font-bold mb-1">{f.title}</h4>
-              <p className="text-sm text-[#a0a0a0]">{f.desc}</p>
+              <p className="text-sm text-[#b0b0b0]">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -117,8 +119,8 @@ I need citations for every claim.`}
                 <tr key={i} className="border-b border-[#2a2a3e] hover:bg-[#141414]">
                   <td className="p-3 border border-[#2a2a3e] font-medium">{scenario}</td>
                   <td className="p-3 border border-[#2a2a3e] text-center">{grok}</td>
-                  <td className="p-3 border border-[#2a2a3e] text-center text-[#a0a0a0]">{alt}</td>
-                  <td className="p-3 border border-[#2a2a3e] text-[#a0a0a0]">{verdict}</td>
+                  <td className="p-3 border border-[#2a2a3e] text-center text-[#b0b0b0]">{alt}</td>
+                  <td className="p-3 border border-[#2a2a3e] text-[#b0b0b0]">{verdict}</td>
                 </tr>
               ))}
             </tbody>
@@ -160,8 +162,8 @@ function PromptCard({ title, desc, prompt }: { title: string; desc: string; prom
     <div className="bg-[#1a1a2e] rounded-lg border border-[#2a2a3e] overflow-hidden">
       <div className="p-5">
         <h4 className="font-bold mb-1">{title}</h4>
-        <p className="text-sm text-[#a0a0a0] mb-3">{desc}</p>
-        <pre className="text-[#e8e8e8]"><code>{prompt}</code></pre>
+        <p className="text-sm text-[#b0b0b0] mb-3">{desc}</p>
+        <CopyableCode>{prompt}</CopyableCode>
       </div>
     </div>
   );

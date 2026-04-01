@@ -1,3 +1,5 @@
+import CopyableCode from "./CopyableCode";
+
 export default function ClaudeGuide() {
   return (
     <div className="space-y-8">
@@ -5,7 +7,7 @@ export default function ClaudeGuide() {
         <h2 className="text-3xl font-bold mb-2" style={{ color: "#d97706" }}>
           Claude — Anthropic
         </h2>
-        <p className="text-[#a0a0a0]">
+        <p className="text-[#b0b0b0]">
           Best for: complex coding, long documents, structured analysis, safety-critical tasks.
           Models: Opus 4.6 (reasoning), Sonnet 4.6 (balanced), Haiku 4.5 (fast/cheap).
         </p>
@@ -229,7 +231,7 @@ function Feature({ title, desc }: { title: string; desc: string }) {
   return (
     <div className="bg-[#141414] rounded-lg p-4">
       <h4 className="font-bold mb-1">{title}</h4>
-      <p className="text-sm text-[#a0a0a0]">{desc}</p>
+      <p className="text-sm text-[#b0b0b0]">{desc}</p>
     </div>
   );
 }
@@ -247,10 +249,8 @@ function PromptExample({
     <div className="bg-[#1a1a2e] rounded-lg border border-[#2a2a3e] overflow-hidden">
       <div className="p-5">
         <h4 className="font-bold mb-1">{title}</h4>
-        <p className="text-sm text-[#a0a0a0] mb-3">{description}</p>
-        <pre className="text-[#e8e8e8]">
-          <code>{prompt}</code>
-        </pre>
+        <p className="text-sm text-[#b0b0b0] mb-3">{description}</p>
+        <CopyableCode>{prompt}</CopyableCode>
       </div>
     </div>
   );

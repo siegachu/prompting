@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,13 +13,24 @@ app.add_middleware(
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "https://www.rsfundmanagement.com",
+        "https://askairight.com",
+        "https://www.askairight.com",
     ],
     allow_methods=["GET"],
     allow_headers=["*"],
 )
 
-BASE_PATH = os.getenv("BASE_PATH", "/prompting")
+BASE_PATH = os.getenv("BASE_PATH", "")
 STATIC_DIR = Path(os.getenv("STATIC_DIR", "/app/static"))
+
+
+@app.get("/", include_in_schema=False)
+async def root_redirect():
+    if not BASE_PATH:
+        root_index = STATIC_DIR / "index.html"
+        if root_index.is_file():
+            return FileResponse(root_index)
+    return RedirectResponse(url=BASE_PATH)
 
 
 @app.get(f"{BASE_PATH}/api/health")

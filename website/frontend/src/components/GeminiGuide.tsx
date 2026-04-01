@@ -1,3 +1,5 @@
+import CopyableCode from "./CopyableCode";
+
 export default function GeminiGuide() {
   return (
     <div className="space-y-8">
@@ -5,7 +7,7 @@ export default function GeminiGuide() {
         <h2 className="text-3xl font-bold mb-2" style={{ color: "#4285f4" }}>
           Gemini — Google
         </h2>
-        <p className="text-[#a0a0a0]">
+        <p className="text-[#b0b0b0]">
           Best for: Google-grounded research, multimodal tasks, long documents (1M+ tokens),
           and free-tier heavy usage. Models: 2.5 Pro (best), 2.5 Flash (fast/cheap).
         </p>
@@ -22,7 +24,7 @@ export default function GeminiGuide() {
           ].map((f) => (
             <div key={f.title} className="bg-[#141414] rounded-lg p-4">
               <h4 className="font-bold mb-1">{f.title}</h4>
-              <p className="text-sm text-[#a0a0a0]">{f.desc}</p>
+              <p className="text-sm text-[#b0b0b0]">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -178,8 +180,8 @@ function PromptCard({ title, desc, prompt }: { title: string; desc: string; prom
     <div className="bg-[#1a1a2e] rounded-lg border border-[#2a2a3e] overflow-hidden">
       <div className="p-5">
         <h4 className="font-bold mb-1">{title}</h4>
-        <p className="text-sm text-[#a0a0a0] mb-3">{desc}</p>
-        <pre className="text-[#e8e8e8]"><code>{prompt}</code></pre>
+        <p className="text-sm text-[#b0b0b0] mb-3">{desc}</p>
+        <CopyableCode>{prompt}</CopyableCode>
       </div>
     </div>
   );

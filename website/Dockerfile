@@ -22,7 +22,7 @@ COPY --from=frontend-build /app/frontend/out/ ./static/
 
 # Set environment
 ENV PORT=8080
-ENV BASE_PATH=/prompting
+ENV BASE_PATH=
 ENV STATIC_DIR=/app/static
 
 EXPOSE 8080

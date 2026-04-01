@@ -1,3 +1,5 @@
+import CopyableCode from "./CopyableCode";
+
 export default function DeepSeekGuide() {
   return (
     <div className="space-y-8">
@@ -5,7 +7,7 @@ export default function DeepSeekGuide() {
         <h2 className="text-3xl font-bold mb-2" style={{ color: "#7c3aed" }}>
           DeepSeek
         </h2>
-        <p className="text-[#a0a0a0]">
+        <p className="text-[#b0b0b0]">
           Best for: math/logic verification, reasoning chains, cost-effective analysis,
           open-weight alternatives. Models: DeepSeek-V3.2 (chat), DeepSeek-R1 (reasoning).
         </p>
@@ -22,7 +24,7 @@ export default function DeepSeekGuide() {
           ].map((f) => (
             <div key={f.title} className="bg-[#141414] rounded-lg p-4">
               <h4 className="font-bold mb-1">{f.title}</h4>
-              <p className="text-sm text-[#a0a0a0]">{f.desc}</p>
+              <p className="text-sm text-[#b0b0b0]">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -122,22 +124,22 @@ Account for all probability branches.`}
       <section>
         <h3 className="text-2xl font-bold mb-4">DeepSeek in the MoE Workflow</h3>
         <div className="bg-[#1a1a2e] rounded-lg p-6 border border-[#2a2a3e]">
-          <p className="text-[#a0a0a0] mb-4">
+          <p className="text-[#b0b0b0] mb-4">
             DeepSeek&apos;s primary role in a Mixture of Experts workflow is as the <strong className="text-white">VERIFIER</strong>.
             It checks math, logic, and consistency in outputs from Claude, Gemini, and Grok.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-[#141414] rounded-lg p-4">
               <h4 className="font-bold text-[#7c3aed] mb-2">Phase 1</h4>
-              <p className="text-sm text-[#a0a0a0]">Not used. Primary research done by Claude, Gemini, Grok (they have search).</p>
+              <p className="text-sm text-[#b0b0b0]">Not used. Primary research done by Claude, Gemini, Grok (they have search).</p>
             </div>
             <div className="bg-[#141414] rounded-lg p-4">
               <h4 className="font-bold text-[#7c3aed] mb-2">Phase 2: Discussion</h4>
-              <p className="text-sm text-[#a0a0a0]">Receives synthesis, verifies all calculations and logic. Votes AGREE/DISAGREE with evidence.</p>
+              <p className="text-sm text-[#b0b0b0]">Receives synthesis, verifies all calculations and logic. Votes AGREE/DISAGREE with evidence.</p>
             </div>
             <div className="bg-[#141414] rounded-lg p-4">
               <h4 className="font-bold text-[#7c3aed] mb-2">Verification</h4>
-              <p className="text-sm text-[#a0a0a0]">Final check on consensus report. Flags numerical inconsistencies and logical errors.</p>
+              <p className="text-sm text-[#b0b0b0]">Final check on consensus report. Flags numerical inconsistencies and logical errors.</p>
             </div>
           </div>
         </div>
@@ -177,8 +179,8 @@ function PromptCard({ title, desc, prompt }: { title: string; desc: string; prom
     <div className="bg-[#1a1a2e] rounded-lg border border-[#2a2a3e] overflow-hidden">
       <div className="p-5">
         <h4 className="font-bold mb-1">{title}</h4>
-        <p className="text-sm text-[#a0a0a0] mb-3">{desc}</p>
-        <pre className="text-[#e8e8e8]"><code>{prompt}</code></pre>
+        <p className="text-sm text-[#b0b0b0] mb-3">{desc}</p>
+        <CopyableCode>{prompt}</CopyableCode>
       </div>
     </div>
   );

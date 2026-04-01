@@ -1,3 +1,5 @@
+import CopyableCode from "./CopyableCode";
+
 export default function ChatGPTGuide() {
   return (
     <div className="space-y-8">
@@ -5,7 +7,7 @@ export default function ChatGPTGuide() {
         <h2 className="text-3xl font-bold mb-2" style={{ color: "#10a37f" }}>
           ChatGPT — OpenAI
         </h2>
-        <p className="text-[#a0a0a0]">
+        <p className="text-[#b0b0b0]">
           Best for: general knowledge, creative brainstorming, GPT ecosystem (plugins/GPTs),
           image generation, function calling. Models: o3 (reasoning), GPT-4o (balanced), GPT-4o-mini (fast).
         </p>
@@ -22,7 +24,7 @@ export default function ChatGPTGuide() {
           ].map((f) => (
             <div key={f.title} className="bg-[#141414] rounded-lg p-4">
               <h4 className="font-bold mb-1">{f.title}</h4>
-              <p className="text-sm text-[#a0a0a0]">{f.desc}</p>
+              <p className="text-sm text-[#b0b0b0]">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -198,8 +200,8 @@ function PromptCard({ title, desc, prompt }: { title: string; desc: string; prom
     <div className="bg-[#1a1a2e] rounded-lg border border-[#2a2a3e] overflow-hidden">
       <div className="p-5">
         <h4 className="font-bold mb-1">{title}</h4>
-        <p className="text-sm text-[#a0a0a0] mb-3">{desc}</p>
-        <pre className="text-[#e8e8e8]"><code>{prompt}</code></pre>
+        <p className="text-sm text-[#b0b0b0] mb-3">{desc}</p>
+        <CopyableCode>{prompt}</CopyableCode>
       </div>
     </div>
   );
