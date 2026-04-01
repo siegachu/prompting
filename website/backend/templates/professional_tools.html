@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Discover 1,000+ AI tools across 88 categories tailored to 150 professions. Find the right AI to automate your daily tasks and boost productivity.">
+    <meta name="description" content="Discover the best AI tools for your profession. 10 curated recommendations per role — 5 most-used + 5 unique picks, ranked by real-world usage data.">
     <meta name="robots" content="index, follow">
-    <title>AI Tools Finder | Find the Right AI for Your Job</title>
+    <title>Professional AI Tools | Ask It Right</title>
     <link rel="canonical" href="https://askairight.com/professional_tools">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="AI Tools Finder | Find the Right AI for Your Job">
-    <meta property="og:description" content="Discover 1,000+ AI tools across 88 categories tailored to 150 professions. Find the right AI to automate your daily tasks and boost productivity.">
+    <meta property="og:title" content="Professional AI Tools | Ask It Right">
+    <meta property="og:description" content="Discover the best AI tools for your profession. 10 curated recommendations per role, ranked by real-world usage.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://askairight.com/professional_tools">
 
@@ -21,8 +21,7 @@
         "@type": "Organization",
         "name": "Ask It Right",
         "url": "https://askairight.com",
-        "email": "ryan+askairight@rsfundmanagement.com",
-        "description": "AI prompting guides, tools, and professional resources."
+        "email": "ryan+askairight@rsfundmanagement.com"
     }
     </script>
 
@@ -31,27 +30,22 @@
     {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "AI Tools Finder",
+        "name": "Professional AI Tools",
         "url": "https://askairight.com/professional_tools",
-        "description": "Discover 1,000+ AI tools across 88 categories tailored to 150 professions. Find the right AI to automate your daily tasks and boost productivity.",
+        "description": "Curated AI tool recommendations for 150 professions, ranked by real-world usage.",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Any",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "provider": {
-            "@type": "Organization",
-            "name": "Ask It Right",
-            "url": "https://askairight.com"
-        }
+        "provider": { "@type": "Organization", "name": "Ask It Right", "url": "https://askairight.com" }
     }
     </script>
 
-    <!-- ItemList Schema: Top AI Tools -->
+    <!-- ItemList Schema -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "ItemList",
         "name": "Top AI Tools for Professionals",
-        "description": "The most popular AI tools across all professions and categories.",
         "numberOfItems": {{ top_tools | length }},
         "itemListElement": [
             {% for tool in top_tools %}
@@ -64,12 +58,7 @@
                     "description": "{{ tool.description | replace('"', '\\"') if tool.description else tool.name }}",
                     "url": "{{ tool.url or '' }}",
                     "applicationCategory": "{{ tool.category }}",
-                    "offers": {
-                        "@type": "Offer",
-                        "price": "0",
-                        "priceCurrency": "USD",
-                        "description": "{{ tool.pricing_tier or 'Varies' }}"
-                    }
+                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "{{ tool.pricing_tier or 'Varies' }}" }
                 }
             }{% if not loop.last %},{% endif %}
             {% endfor %}
@@ -87,60 +76,69 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'] },
                     colors: {
-                        brand: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' }
+                        bg: { primary: '#0a0a0a', secondary: '#141414', card: '#1a1a2e', hover: '#22223a' },
+                        border: { dark: '#2a2a3e' },
+                        text: { primary: '#e8e8e8', secondary: '#b0b0b0', muted: '#808080' },
+                        accent: { indigo: '#6366f1', amber: '#f59e0b', rose: '#f43f5e', green: '#22c55e', blue: '#3b82f6', purple: '#7c3aed' }
                     }
                 }
             }
         }
     </script>
     <style>
-        .tool-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
-        .tool-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.15); }
+        body { background: #0a0a0a; color: #e8e8e8; }
+        .tool-card { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
+        .tool-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); border-color: #3a3a5e; }
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .skeleton { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        .skeleton { background: linear-gradient(90deg, #1a1a2e 25%, #22223a 50%, #1a1a2e 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #141414; }
+        ::-webkit-scrollbar-thumb { background: #2a2a3e; border-radius: 4px; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900 min-h-screen">
+<body class="font-sans min-h-screen">
 
 <div x-data="aiToolsFinder()" x-init="init()" x-cloak>
 
     <!-- Header -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+    <header class="border-b border-border-dark bg-bg-primary sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <div class="w-9 h-9 bg-accent-indigo rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M14.25 3.104c.251.023.501.05.75.082M19 14.5l-2.47 2.47a2.25 2.25 0 01-1.59.659H9.06a2.25 2.25 0 01-1.591-.659L5 14.5m14 0V17a2 2 0 01-2 2H7a2 2 0 01-2-2v-2.5" />
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-900">AI Tools Finder</h1>
-                        <p class="text-xs text-gray-500" x-text="ready ? 'Searching ' + stats.total_tools + ' tools across ' + stats.total_jobs + ' professions' : 'Loading...'"></p>
+                        <h1 class="text-lg sm:text-xl font-bold text-text-primary">Professional AI Tools</h1>
+                        <p class="text-xs text-text-muted" x-text="ready ? stats.total_tools + ' tools across ' + stats.total_jobs + ' professions' : 'Loading...'"></p>
                     </div>
                 </div>
-                <a href="https://askairight.com" rel="noopener noreferrer" class="text-sm text-gray-500 hover:text-brand-600 hidden sm:block">Ask It Right</a>
+                <a href="https://askairight.com" class="text-sm text-text-secondary hover:text-white transition hidden sm:block">Ask It Right</a>
             </div>
         </div>
     </header>
 
     <!-- Search Section -->
-    <section class="bg-gradient-to-br from-brand-600 via-brand-700 to-brand-800 py-12 sm:py-16">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6">
-            <h2 class="text-2xl sm:text-3xl font-bold text-white text-center mb-2">Find the Perfect AI Tools for Your Work</h2>
-            <p class="text-brand-200 text-center mb-8">Select your profession or search to discover AI tools that automate your daily tasks</p>
+    <section class="bg-bg-secondary border-b border-border-dark py-10 sm:py-14">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white text-center mb-2">Find the Best AI Tools for Your Role</h2>
+            <p class="text-text-secondary text-center mb-8 text-sm sm:text-base">10 curated picks per profession — 5 most-used + 5 unique gems, ranked by real-world usage</p>
 
-            <div class="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 space-y-4">
+            <div class="bg-bg-card rounded-2xl border border-border-dark p-4 sm:p-6 space-y-4">
                 <!-- Smart Search -->
                 <div class="relative">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Search by profession or tool</label>
+                    <label class="block text-sm font-medium text-text-secondary mb-1">Search by profession or tool</label>
                     <div class="relative">
-                        <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <svg class="absolute left-3 top-3 w-5 h-5 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input type="text"
@@ -155,45 +153,43 @@
                             aria-autocomplete="list"
                             aria-controls="suggestions-list"
                             :aria-expanded="showSuggestions && suggestions.length > 0"
-                            class="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition">
-                        <button @click="doSearch()" aria-label="Search for AI tools" class="absolute right-2 top-1.5 px-4 py-1.5 bg-brand-600 text-white text-sm font-medium rounded-lg hover:bg-brand-700 transition">Search</button>
+                            class="w-full pl-10 pr-24 py-3 text-base bg-bg-primary border border-border-dark rounded-xl text-text-primary placeholder-text-muted focus:ring-2 focus:ring-accent-indigo focus:border-accent-indigo outline-none transition">
+                        <button @click="doSearch()" aria-label="Search" class="absolute right-2 top-1.5 px-4 py-1.5 bg-accent-indigo text-white text-sm font-medium rounded-lg hover:bg-accent-indigo/80 transition">Search</button>
                     </div>
-                    <!-- Autocomplete suggestions -->
+                    <!-- Autocomplete -->
                     <div x-show="showSuggestions && suggestions.length > 0"
                          x-transition
                          id="suggestions-list"
                          role="listbox"
-                         class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                         class="absolute z-50 w-full mt-1 bg-bg-card border border-border-dark rounded-xl shadow-2xl overflow-hidden">
                         <template x-for="s in suggestions" :key="s.id">
                             <button @click="selectProfession(s.id, s.title); showSuggestions = false"
                                     role="option"
-                                    class="w-full text-left px-4 py-3 hover:bg-brand-50 flex items-center justify-between border-b border-gray-100 last:border-0">
+                                    class="w-full text-left px-4 py-3 hover:bg-bg-hover flex items-center justify-between border-b border-border-dark last:border-0 transition">
                                 <div>
-                                    <span class="font-medium text-gray-900" x-text="s.title"></span>
-                                    <span class="text-xs text-gray-500 ml-2" x-text="s.category"></span>
+                                    <span class="font-medium text-text-primary" x-text="s.title"></span>
+                                    <span class="text-xs text-text-muted ml-2" x-text="s.category"></span>
                                 </div>
-                                <span x-show="s.is_freelance" class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Freelance</span>
+                                <span x-show="s.is_freelance" class="text-xs bg-accent-green/20 text-accent-green px-2 py-0.5 rounded-full">Freelance</span>
                             </button>
                         </template>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 text-gray-400 text-xs">
-                    <div class="flex-1 h-px bg-gray-200"></div>
+                <div class="flex items-center gap-2 text-text-muted text-xs">
+                    <div class="flex-1 h-px bg-border-dark"></div>
                     <span>or browse by</span>
-                    <div class="flex-1 h-px bg-gray-200"></div>
+                    <div class="flex-1 h-px bg-border-dark"></div>
                 </div>
 
-                <!-- Dropdowns row -->
+                <!-- Dropdowns -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Profession Dropdown -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Profession</label>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">Profession</label>
                         <select x-model="selectedProfessionId"
                                 @change="onProfessionChange()"
-                                id="profession-select"
                                 aria-label="Select a profession"
-                                class="w-full px-3 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm">
+                                class="w-full px-3 py-3 border border-border-dark rounded-xl bg-bg-primary text-text-primary focus:ring-2 focus:ring-accent-indigo focus:border-accent-indigo outline-none text-sm">
                             <option value="">Select a profession...</option>
                             <template x-for="(jobs, category) in professions" :key="category">
                                 <optgroup :label="category">
@@ -204,15 +200,12 @@
                             </template>
                         </select>
                     </div>
-
-                    <!-- Category Dropdown -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tool Category</label>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">Tool Category</label>
                         <select x-model="selectedCategory"
                                 @change="onCategoryChange()"
-                                id="category-select"
                                 aria-label="Select a tool category"
-                                class="w-full px-3 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm">
+                                class="w-full px-3 py-3 border border-border-dark rounded-xl bg-bg-primary text-text-primary focus:ring-2 focus:ring-accent-indigo focus:border-accent-indigo outline-none text-sm">
                             <option value="">All categories...</option>
                             <template x-for="cat in categories" :key="cat.category">
                                 <option :value="cat.category" x-text="cat.category + ' (' + cat.count + ')'"></option>
@@ -221,10 +214,10 @@
                     </div>
                 </div>
 
-                <!-- Clear Filters -->
+                <!-- Clear -->
                 <div x-show="searchQuery || selectedProfessionId || selectedCategory" class="flex justify-end">
-                    <button @click="searchQuery = ''; selectedProfessionId = ''; selectedCategory = ''; currentJobTitle = ''; tools = []; total = 0; totalPages = 0;"
-                            class="text-xs text-gray-500 hover:text-brand-600 underline transition">
+                    <button @click="searchQuery = ''; selectedProfessionId = ''; selectedCategory = ''; currentJobTitle = ''; tools = []; total = 0;"
+                            class="text-xs text-text-muted hover:text-accent-rose underline transition">
                         Clear all filters
                     </button>
                 </div>
@@ -232,83 +225,150 @@
         </div>
     </section>
 
-    <!-- Results Section -->
+    <!-- Results -->
     <section id="results-section" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <!-- Results header -->
-        <div class="flex items-center justify-between mb-6" x-show="tools.length > 0 || loading">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900">
-                    <span x-show="currentJobTitle" x-text="'AI Tools for ' + currentJobTitle"></span>
-                    <span x-show="selectedCategory && !currentJobTitle" x-text="selectedCategory + ' Tools'"></span>
-                    <span x-show="!currentJobTitle && !selectedCategory && searchQuery">Search Results</span>
-                    <span x-show="!currentJobTitle && !selectedCategory && !searchQuery">All AI Tools</span>
-                </h3>
-                <p class="text-sm text-gray-500" x-text="total + ' tools found — showing page ' + page + ' of ' + totalPages"></p>
-                <p class="text-xs text-gray-400 mt-0.5" x-show="currentJobTitle">Filtered by value-add scores across similar professional usages</p>
+        <div class="mb-6" x-show="tools.length > 0 || loading">
+            <h3 class="text-lg font-semibold text-white">
+                <span x-show="currentJobTitle" x-text="'AI Tools for ' + currentJobTitle"></span>
+                <span x-show="selectedCategory && !currentJobTitle" x-text="selectedCategory + ' Tools'"></span>
+                <span x-show="!currentJobTitle && !selectedCategory && searchQuery">Search Results</span>
+                <span x-show="!currentJobTitle && !selectedCategory && !searchQuery">Most Popular AI Tools</span>
+            </h3>
+            <p class="text-sm text-text-secondary mt-1" x-text="total + ' tools — sorted by real-world usage (airankings.co)'"></p>
+        </div>
+
+        <!-- Section: Top 5 Most Used -->
+        <div x-show="!loading && topTools.length > 0" class="mb-10 fade-in">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="w-2 h-2 rounded-full bg-accent-amber"></span>
+                <h4 class="text-sm font-semibold text-accent-amber uppercase tracking-wide">Top 5 — Most Used</h4>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-gray-500">Per page:</span>
-                <select x-model.number="limit" @change="loadTools(1)" class="text-sm border border-gray-300 rounded-lg px-2 py-1">
-                    <option value="20">20</option>
-                    <option value="40">40</option>
-                    <option value="60">60</option>
-                </select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <template x-for="(tool, idx) in topTools" :key="'top-' + tool.id">
+                    <div class="tool-card bg-bg-card rounded-xl border border-border-dark p-4 flex flex-col relative">
+                        <!-- Rank badge -->
+                        <div class="absolute -top-2 -left-2 w-7 h-7 rounded-full bg-accent-amber text-black text-xs font-bold flex items-center justify-center shadow-lg" x-text="idx + 1"></div>
+
+                        <div class="flex items-start gap-3 mb-3 mt-1">
+                            <img :src="getToolIcon(tool.url)"
+                                 :alt="tool.name + ' icon'"
+                                 loading="lazy"
+                                 class="w-10 h-10 rounded-lg bg-bg-hover object-contain flex-shrink-0"
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%236366f1%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>AI</text></svg>'">
+                            <div class="min-w-0">
+                                <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer"
+                                   class="font-semibold text-sm text-text-primary hover:text-accent-indigo truncate block transition"
+                                   x-text="tool.name"></a>
+                                <span class="text-xs text-accent-indigo font-medium" x-text="tool.subcategory || tool.category"></span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-text-secondary leading-relaxed mb-3 flex-1 line-clamp-3" x-text="tool.description || 'AI-powered tool for ' + (tool.category || 'productivity').toLowerCase()"></p>
+
+                        <div x-show="tool.use_case" class="mb-3">
+                            <span class="inline-flex items-center text-xs bg-accent-indigo/15 text-accent-indigo px-2 py-0.5 rounded-full">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                <span x-text="tool.use_case"></span>
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-border-dark">
+                            <span class="text-xs font-medium px-2 py-1 rounded-full"
+                                  :class="getPricingClass(tool.pricing_tier || tool.pricing)"
+                                  x-text="formatPricing(tool.pricing_tier || tool.pricing)"></span>
+                            <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer" x-show="tool.url"
+                               class="text-xs font-medium text-accent-indigo hover:text-white flex items-center gap-1 transition">
+                                Visit
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
 
-        <!-- Loading skeleton -->
-        <div x-show="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <template x-for="i in 8" :key="'skel-'+i">
-                <div class="bg-white rounded-xl border border-gray-200 p-4">
-                    <div class="skeleton h-12 w-12 rounded-lg mb-3"></div>
-                    <div class="skeleton h-4 w-3/4 rounded mb-2"></div>
-                    <div class="skeleton h-3 w-full rounded mb-1"></div>
-                    <div class="skeleton h-3 w-5/6 rounded mb-3"></div>
-                    <div class="skeleton h-6 w-20 rounded-full"></div>
-                </div>
-            </template>
+        <!-- Section: 5 Unique Picks -->
+        <div x-show="!loading && uniqueTools.length > 0" class="mb-10 fade-in">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="w-2 h-2 rounded-full bg-accent-purple"></span>
+                <h4 class="text-sm font-semibold text-accent-purple uppercase tracking-wide">5 Unique Picks — Hidden Gems</h4>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <template x-for="(tool, idx) in uniqueTools" :key="'uniq-' + tool.id">
+                    <div class="tool-card bg-bg-card rounded-xl border border-border-dark p-4 flex flex-col relative">
+                        <div class="absolute -top-2 -left-2 w-7 h-7 rounded-full bg-accent-purple text-white text-xs font-bold flex items-center justify-center shadow-lg" x-text="idx + 6"></div>
+
+                        <div class="flex items-start gap-3 mb-3 mt-1">
+                            <img :src="getToolIcon(tool.url)"
+                                 :alt="tool.name + ' icon'"
+                                 loading="lazy"
+                                 class="w-10 h-10 rounded-lg bg-bg-hover object-contain flex-shrink-0"
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%237c3aed%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>AI</text></svg>'">
+                            <div class="min-w-0">
+                                <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer"
+                                   class="font-semibold text-sm text-text-primary hover:text-accent-purple truncate block transition"
+                                   x-text="tool.name"></a>
+                                <span class="text-xs text-accent-purple font-medium" x-text="tool.subcategory || tool.category"></span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-text-secondary leading-relaxed mb-3 flex-1 line-clamp-3" x-text="tool.description || 'AI-powered tool for ' + (tool.category || 'productivity').toLowerCase()"></p>
+
+                        <div x-show="tool.use_case" class="mb-3">
+                            <span class="inline-flex items-center text-xs bg-accent-purple/15 text-accent-purple px-2 py-0.5 rounded-full">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                <span x-text="tool.use_case"></span>
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-border-dark">
+                            <span class="text-xs font-medium px-2 py-1 rounded-full"
+                                  :class="getPricingClass(tool.pricing_tier || tool.pricing)"
+                                  x-text="formatPricing(tool.pricing_tier || tool.pricing)"></span>
+                            <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer" x-show="tool.url"
+                               class="text-xs font-medium text-accent-purple hover:text-white flex items-center gap-1 transition">
+                                Visit
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
 
-        <!-- Tool Cards Grid -->
-        <div x-show="!loading && tools.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <template x-for="tool in tools" :key="tool.id + '-' + (tool.use_case || '')">
-                <div class="tool-card bg-white rounded-xl border border-gray-200 p-4 flex flex-col fade-in">
-                    <!-- Tool Header -->
-                    <div class="flex items-start gap-3 mb-3">
+        <!-- Unsectioned results (category/search without profession) -->
+        <div x-show="!loading && tools.length > 0 && topTools.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 fade-in">
+            <template x-for="(tool, idx) in tools" :key="'all-' + tool.id + '-' + idx">
+                <div class="tool-card bg-bg-card rounded-xl border border-border-dark p-4 flex flex-col relative">
+                    <div class="absolute -top-2 -left-2 w-7 h-7 rounded-full bg-accent-indigo text-white text-xs font-bold flex items-center justify-center shadow-lg" x-text="idx + 1"></div>
+
+                    <div class="flex items-start gap-3 mb-3 mt-1">
                         <img :src="getToolIcon(tool.url)"
                              :alt="tool.name + ' icon'"
                              loading="lazy"
-                             class="w-10 h-10 rounded-lg bg-gray-100 object-contain flex-shrink-0"
+                             class="w-10 h-10 rounded-lg bg-bg-hover object-contain flex-shrink-0"
                              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%236366f1%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>AI</text></svg>'">
                         <div class="min-w-0">
                             <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer"
-                               class="font-semibold text-sm text-gray-900 hover:text-brand-600 truncate block transition"
+                               class="font-semibold text-sm text-text-primary hover:text-accent-indigo truncate block transition"
                                x-text="tool.name"></a>
-                            <span class="text-xs text-brand-600 font-medium" x-text="tool.subcategory || tool.category"></span>
+                            <span class="text-xs text-accent-indigo font-medium" x-text="tool.subcategory || tool.category"></span>
                         </div>
                     </div>
 
-                    <!-- Description -->
-                    <p class="text-xs text-gray-600 leading-relaxed mb-3 flex-1 line-clamp-3" x-text="tool.description || 'AI-powered tool for ' + (tool.category || 'productivity').toLowerCase()"></p>
+                    <p class="text-xs text-text-secondary leading-relaxed mb-3 flex-1 line-clamp-3" x-text="tool.description || 'AI-powered tool for ' + (tool.category || 'productivity').toLowerCase()"></p>
 
-                    <!-- Use case badge (when from profession search) -->
-                    <div x-show="tool.use_case" class="mb-3">
-                        <span class="inline-flex items-center text-xs bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full">
-                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                            <span x-text="tool.use_case"></span>
-                        </span>
-                    </div>
-
-                    <!-- Footer: Price + Link -->
-                    <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                    <div class="flex items-center justify-between mt-auto pt-3 border-t border-border-dark">
                         <span class="text-xs font-medium px-2 py-1 rounded-full"
                               :class="getPricingClass(tool.pricing_tier || tool.pricing)"
                               x-text="formatPricing(tool.pricing_tier || tool.pricing)"></span>
-                        <a :href="tool.url || '#'"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           x-show="tool.url"
-                           class="text-xs font-medium text-brand-600 hover:text-brand-800 flex items-center gap-1 transition">
+                        <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer" x-show="tool.url"
+                           class="text-xs font-medium text-accent-indigo hover:text-white flex items-center gap-1 transition">
                             Visit
                             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -319,41 +379,52 @@
             </template>
         </div>
 
-        <!-- Empty state -->
-        <div x-show="!loading && tools.length === 0 && (selectedProfessionId || selectedCategory || searchQuery)" class="text-center py-16">
-            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p class="text-gray-500 text-lg">No tools found</p>
-            <p class="text-gray-400 text-sm mt-1">Try a different search or profession</p>
+        <!-- Loading skeleton -->
+        <div x-show="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <template x-for="i in 10" :key="'skel-'+i">
+                <div class="bg-bg-card rounded-xl border border-border-dark p-4">
+                    <div class="skeleton h-10 w-10 rounded-lg mb-3"></div>
+                    <div class="skeleton h-4 w-3/4 rounded mb-2"></div>
+                    <div class="skeleton h-3 w-full rounded mb-1"></div>
+                    <div class="skeleton h-3 w-5/6 rounded mb-3"></div>
+                    <div class="skeleton h-6 w-20 rounded-full"></div>
+                </div>
+            </template>
         </div>
 
-        <!-- Pagination -->
-        <div x-show="totalPages > 1" class="flex items-center justify-center gap-2 mt-8">
-            <button @click="loadTools(page - 1)" :disabled="page <= 1"
-                    class="px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
-                Previous
-            </button>
-            <template x-for="p in getPageNumbers()" :key="'page-'+p">
-                <button @click="typeof p === 'number' && loadTools(p)"
-                        class="w-9 h-9 text-sm font-medium rounded-lg transition"
-                        :class="p === page ? 'bg-brand-600 text-white' : (typeof p === 'number' ? 'border border-gray-300 hover:bg-gray-50' : 'cursor-default')"
-                        x-text="p">
-                </button>
-            </template>
-            <button @click="loadTools(page + 1)" :disabled="page >= totalPages"
-                    class="px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
-                Next
-            </button>
+        <!-- Empty state -->
+        <div x-show="!loading && tools.length === 0 && (selectedProfessionId || selectedCategory || searchQuery)" class="text-center py-16">
+            <svg class="w-16 h-16 text-text-muted mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-text-secondary text-lg">No tools found</p>
+            <p class="text-text-muted text-sm mt-1">Try a different search or profession</p>
+        </div>
+
+        <!-- Data source -->
+        <div x-show="tools.length > 0" class="mt-8 text-center">
+            <p class="text-xs text-text-muted">Rankings based on real-world usage data from <a href="https://airankings.co" target="_blank" rel="noopener noreferrer" class="text-accent-indigo hover:text-white transition">airankings.co</a> — derived from 100B+ daily DNS requests</p>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-8 mt-12">
+    <footer class="border-t border-border-dark py-6 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-            <p class="text-sm text-gray-500">AI Tools Finder &mdash; <span x-text="stats.total_tools"></span> tools across <span x-text="stats.total_categories"></span> categories</p>
-            <p class="text-xs text-gray-400 mt-1">&copy; 2026 <a href="https://askairight.com" class="hover:text-brand-600">Ask It Right</a></p>
-            <p class="text-xs text-gray-400 mt-2">Questions or comments? Contact <a href="mailto:ryan+askairight@rsfundmanagement.com" class="text-brand-500 hover:text-brand-700">ryan+askairight@rsfundmanagement.com</a></p>
+            <p class="text-sm text-text-secondary">
+                Professional AI Tools &mdash; <span x-text="stats.total_tools"></span> tools across <span x-text="stats.total_categories"></span> categories
+            </p>
+            <p class="mt-3 text-text-muted text-xs">
+                <a href="https://askairight.com" class="text-text-secondary hover:text-white transition">Ask It Right</a>
+                &nbsp;|&nbsp;
+                <a href="https://quotedtruth.com" class="text-text-secondary hover:text-white transition">Quoted Truth</a>
+                &nbsp;|&nbsp;
+                <a href="https://firstdoorkey.com" class="text-text-secondary hover:text-white transition">First Door Key</a>
+            </p>
+            <p class="text-xs text-text-muted mt-2">
+                For questions, reach out to
+                <a href="mailto:ryan+askairight@rsfundmanagement.com" class="text-accent-rose hover:underline">ryan+askairight@rsfundmanagement.com</a>
+            </p>
+            <p class="text-xs text-text-muted mt-1">&copy; 2026 Ask It Right</p>
         </div>
     </footer>
 </div>
@@ -361,7 +432,6 @@
 <script>
 function aiToolsFinder() {
     return {
-        // State
         professions: {},
         categories: [],
         tools: [],
@@ -374,10 +444,14 @@ function aiToolsFinder() {
         currentJobTitle: '',
         showSuggestions: false,
         loading: false,
-        page: 1,
-        limit: 20,
         total: 0,
-        totalPages: 0,
+
+        get topTools() {
+            return this.tools.filter(t => t.recommendation_type === 'top');
+        },
+        get uniqueTools() {
+            return this.tools.filter(t => t.recommendation_type === 'unique');
+        },
 
         async init() {
             try {
@@ -416,7 +490,7 @@ function aiToolsFinder() {
             this.selectedCategory = '';
             this.currentJobTitle = '';
             this.showSuggestions = false;
-            await this.loadTools(1);
+            await this.loadTools();
         },
 
         async selectProfession(id, title) {
@@ -424,14 +498,13 @@ function aiToolsFinder() {
             this.selectedCategory = '';
             this.searchQuery = title;
             this.currentJobTitle = title;
-            await this.loadTools(1);
+            await this.loadTools();
         },
 
         async onProfessionChange() {
             this.selectedCategory = '';
             this.searchQuery = '';
             if (this.selectedProfessionId) {
-                // Get title from professions
                 for (const jobs of Object.values(this.professions)) {
                     const job = jobs.find(j => j.id == this.selectedProfessionId);
                     if (job) { this.currentJobTitle = job.title; break; }
@@ -439,33 +512,30 @@ function aiToolsFinder() {
             } else {
                 this.currentJobTitle = '';
             }
-            await this.loadTools(1);
+            await this.loadTools();
         },
 
         async onCategoryChange() {
             this.selectedProfessionId = '';
             this.searchQuery = '';
             this.currentJobTitle = '';
-            await this.loadTools(1);
+            await this.loadTools();
         },
 
-        async loadTools(newPage) {
-            this.page = newPage;
+        async loadTools() {
             this.loading = true;
-
-            let url = `/professional_tools/api/tools?page=${this.page}&limit=${this.limit}`;
+            let url = '/professional_tools/api/tools?';
             if (this.selectedProfessionId) {
-                url += `&profession_id=${this.selectedProfessionId}`;
+                url += `profession_id=${this.selectedProfessionId}`;
             } else if (this.selectedCategory) {
-                url += `&category=${encodeURIComponent(this.selectedCategory)}`;
+                url += `category=${encodeURIComponent(this.selectedCategory)}`;
             } else if (this.searchQuery) {
-                url += `&q=${encodeURIComponent(this.searchQuery)}`;
+                url += `q=${encodeURIComponent(this.searchQuery)}`;
             }
 
             const data = await this.fetchJSON(url);
             this.tools = data.tools;
             this.total = data.total;
-            this.totalPages = data.total_pages;
 
             if (data.job_info && data.job_info.title) {
                 this.currentJobTitle = data.job_info.title;
@@ -492,33 +562,16 @@ function aiToolsFinder() {
             if (p.includes('freemium')) return 'Freemium';
             if (p.includes('enterprise')) return 'Enterprise';
             if (p.includes('pay-per')) return 'Pay-per-use';
-            if (p.includes('paid') || p.startsWith('$')) return pricing;
             return pricing;
         },
 
         getPricingClass(pricing) {
-            if (!pricing) return 'bg-gray-100 text-gray-600';
+            if (!pricing) return 'bg-white/10 text-text-secondary';
             const p = pricing.toLowerCase();
-            if (p === 'free') return 'bg-green-100 text-green-700';
-            if (p.includes('freemium')) return 'bg-blue-100 text-blue-700';
-            if (p.includes('enterprise')) return 'bg-purple-100 text-purple-700';
-            return 'bg-amber-100 text-amber-700';
-        },
-
-        getPageNumbers() {
-            const pages = [];
-            const total = this.totalPages;
-            const current = this.page;
-            if (total <= 7) {
-                for (let i = 1; i <= total; i++) pages.push(i);
-            } else {
-                pages.push(1);
-                if (current > 3) pages.push('...');
-                for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) pages.push(i);
-                if (current < total - 2) pages.push('...');
-                pages.push(total);
-            }
-            return pages;
+            if (p === 'free') return 'bg-accent-green/20 text-accent-green';
+            if (p.includes('freemium')) return 'bg-accent-blue/20 text-accent-blue';
+            if (p.includes('enterprise')) return 'bg-accent-purple/20 text-accent-purple';
+            return 'bg-accent-amber/20 text-accent-amber';
         }
     }
 }

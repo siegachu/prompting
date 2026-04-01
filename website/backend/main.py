@@ -94,39 +94,82 @@ async def pt_get_categories():
     return [{"category": r["category"], "count": r["cnt"]} for r in rows]
 
 
+def _get_top10_for_profession(c, profession_id):
+    """Get 5 most-used tools + 5 unique tools from different categories (10 total)."""
+    # Top 5: best value_add_score, sorted by popularity (most used first)
+    c.execute("""
+        SELECT t.id, t.name, t.category, t.subcategory, t.description,
+               t.url, t.pricing, t.pricing_tier,
+               m.use_case, m.automation_potential, m.value_add_score,
+               t.popularity_rank
+        FROM job_tool_mapping m
+        JOIN ai_tools t ON m.tool_id = t.id
+        WHERE m.job_id = ?
+        GROUP BY t.id
+        HAVING m.value_add_score = MAX(m.value_add_score)
+        ORDER BY t.popularity_rank ASC, m.value_add_score DESC
+        LIMIT 5
+    """, (profession_id,))
+    top5 = [dict(r) for r in c.fetchall()]
+    top5_ids = {t["id"] for t in top5}
+    top5_categories = {t["category"] for t in top5}
+
+    # Unique 5: from DIFFERENT categories than top 5, sorted by value then popularity
+    if top5_ids:
+        id_ph = ",".join("?" * len(top5_ids))
+        cat_ph = ",".join("?" * len(top5_categories))
+        c.execute(f"""
+            SELECT t.id, t.name, t.category, t.subcategory, t.description,
+                   t.url, t.pricing, t.pricing_tier,
+                   m.use_case, m.automation_potential, m.value_add_score,
+                   t.popularity_rank
+            FROM job_tool_mapping m
+            JOIN ai_tools t ON m.tool_id = t.id
+            WHERE m.job_id = ?
+              AND t.id NOT IN ({id_ph})
+              AND t.category NOT IN ({cat_ph})
+            GROUP BY t.id
+            HAVING m.value_add_score = MAX(m.value_add_score)
+            ORDER BY m.value_add_score DESC, t.popularity_rank ASC
+            LIMIT 5
+        """, (profession_id, *top5_ids, *top5_categories))
+    else:
+        c.execute("""
+            SELECT t.id, t.name, t.category, t.subcategory, t.description,
+                   t.url, t.pricing, t.pricing_tier,
+                   m.use_case, m.automation_potential, m.value_add_score,
+                   t.popularity_rank
+            FROM job_tool_mapping m
+            JOIN ai_tools t ON m.tool_id = t.id
+            WHERE m.job_id = ?
+            GROUP BY t.id
+            HAVING m.value_add_score = MAX(m.value_add_score)
+            ORDER BY m.value_add_score DESC, t.popularity_rank ASC
+            LIMIT 5
+        """, (profession_id,))
+    unique5 = [dict(r) for r in c.fetchall()]
+
+    # Tag them
+    for t in top5:
+        t["recommendation_type"] = "top"
+    for t in unique5:
+        t["recommendation_type"] = "unique"
+
+    return top5 + unique5
+
+
 @app.get("/professional_tools/api/tools")
 async def pt_get_tools(
     profession_id: int = Query(None, description="Job/profession ID"),
     category: str = Query(None, description="Tool category filter"),
     q: str = Query(None, description="Search query"),
-    page: int = Query(1, ge=1),
-    limit: int = Query(20, ge=1, le=100),
 ):
     with get_db() as conn:
         c = conn.cursor()
-        offset = (page - 1) * limit
 
         if profession_id:
-            c.execute("""
-                SELECT t.id, t.name, t.category, t.subcategory, t.description,
-                       t.url, t.pricing, t.pricing_tier,
-                       m.use_case, m.automation_potential, m.value_add_score,
-                       t.popularity_rank
-                FROM job_tool_mapping m
-                JOIN ai_tools t ON m.tool_id = t.id
-                WHERE m.job_id = ?
-                GROUP BY t.id
-                HAVING m.value_add_score = MAX(m.value_add_score)
-                ORDER BY m.value_add_score DESC, t.popularity_rank ASC, t.name
-                LIMIT ? OFFSET ?
-            """, (profession_id, limit, offset))
-            tools = [dict(r) for r in c.fetchall()]
-
-            c.execute("""
-                SELECT COUNT(DISTINCT t.id) FROM job_tool_mapping m
-                JOIN ai_tools t ON m.tool_id = t.id WHERE m.job_id = ?
-            """, (profession_id,))
-            total = c.fetchone()[0]
+            tools = _get_top10_for_profession(c, profession_id)
+            total = len(tools)
 
             c.execute("SELECT title, category FROM jobs WHERE id = ?", (profession_id,))
             job = c.fetchone()
@@ -137,12 +180,10 @@ async def pt_get_tools(
                 SELECT id, name, category, subcategory, description, url, pricing, pricing_tier,
                        popularity_rank
                 FROM ai_tools WHERE category = ?
-                ORDER BY popularity_rank ASC, name LIMIT ? OFFSET ?
-            """, (category, limit, offset))
+                ORDER BY popularity_rank ASC, name LIMIT 10
+            """, (category,))
             tools = [dict(r) for r in c.fetchall()]
-
-            c.execute("SELECT COUNT(*) FROM ai_tools WHERE category = ?", (category,))
-            total = c.fetchone()[0]
+            total = len(tools)
             job_info = None
 
         elif q:
@@ -155,63 +196,37 @@ async def pt_get_tools(
             matching_jobs = [dict(r) for r in c.fetchall()]
 
             if matching_jobs:
-                job_ids = [j["id"] for j in matching_jobs]
-                placeholders = ",".join("?" * len(job_ids))
-                c.execute(f"""
-                    SELECT t.id, t.name, t.category, t.subcategory, t.description,
-                           t.url, t.pricing, t.pricing_tier,
-                           m.use_case, m.automation_potential, m.value_add_score,
-                           t.popularity_rank
-                    FROM job_tool_mapping m
-                    JOIN ai_tools t ON m.tool_id = t.id
-                    WHERE m.job_id IN ({placeholders})
-                    GROUP BY t.id
-                    HAVING m.value_add_score = MAX(m.value_add_score)
-                    ORDER BY m.value_add_score DESC, t.popularity_rank ASC, t.name
-                    LIMIT ? OFFSET ?
-                """, (*job_ids, limit, offset))
-                tools = [dict(r) for r in c.fetchall()]
-
-                c.execute(f"""
-                    SELECT COUNT(DISTINCT t.id) FROM job_tool_mapping m
-                    JOIN ai_tools t ON m.tool_id = t.id
-                    WHERE m.job_id IN ({placeholders})
-                """, tuple(job_ids))
-                total = c.fetchone()[0]
+                # Use first matched job for 10-tool recommendation
+                tools = _get_top10_for_profession(c, matching_jobs[0]["id"])
+                total = len(tools)
                 job_info = {"matched_jobs": matching_jobs}
             else:
                 c.execute("""
                     SELECT id, name, category, subcategory, description, url, pricing, pricing_tier,
                            popularity_rank
                     FROM ai_tools WHERE name LIKE ? OR description LIKE ? OR category LIKE ?
-                    ORDER BY popularity_rank ASC, name LIMIT ? OFFSET ?
-                """, (search_term, search_term, search_term, limit, offset))
-                tools = [dict(r) for r in c.fetchall()]
-
-                c.execute("""
-                    SELECT COUNT(*) FROM ai_tools
-                    WHERE name LIKE ? OR description LIKE ? OR category LIKE ?
+                    ORDER BY popularity_rank ASC, name LIMIT 10
                 """, (search_term, search_term, search_term))
-                total = c.fetchone()[0]
+                tools = [dict(r) for r in c.fetchall()]
+                total = len(tools)
                 job_info = None
         else:
+            # No filter - show top 10 most popular tools
             c.execute("""
                 SELECT id, name, category, subcategory, description, url, pricing, pricing_tier,
                        popularity_rank
-                FROM ai_tools ORDER BY popularity_rank ASC, name LIMIT ? OFFSET ?
-            """, (limit, offset))
+                FROM ai_tools ORDER BY popularity_rank ASC, name LIMIT 10
+            """)
             tools = [dict(r) for r in c.fetchall()]
-
-            c.execute("SELECT COUNT(*) FROM ai_tools")
-            total = c.fetchone()[0]
+            total = len(tools)
             job_info = None
 
     return {
         "tools": tools,
         "total": total,
-        "page": page,
-        "limit": limit,
-        "total_pages": (total + limit - 1) // limit,
+        "page": 1,
+        "limit": 10,
+        "total_pages": 1,
         "job_info": job_info,
     }
 
