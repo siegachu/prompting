@@ -239,19 +239,19 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-[#2a2a3e] py-6 mt-12">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm text-[#b0b0b0]">
-          <p className="mt-3 text-[#808080] text-xs">
+          <p className="mt-3 text-[#808080] text-sm">
             Explore our other sites:{" "}
-            <a href="https://quotedtruth.com" className="text-[#b0b0b0] hover:text-white transition">Quoted Truth</a>
+            <a href="https://quotedtruth.com" className="text-[#b0b0b0] hover:text-white transition py-2 px-1 inline-block">Quoted Truth</a>
             {" | "}
-            <a href="https://firstdoorkey.com" className="text-[#b0b0b0] hover:text-white transition">First Door Key</a>
+            <a href="https://firstdoorkey.com" className="text-[#b0b0b0] hover:text-white transition py-2 px-1 inline-block">First Door Key</a>
             {" | "}
-            <a href="https://stock.rsfundmanagement.com" className="text-[#b0b0b0] hover:text-white transition">Stock Research</a>
+            <a href="https://checklistsmart.com" className="text-[#b0b0b0] hover:text-white transition py-2 px-1 inline-block">Checklist Smart</a>
           </p>
           <p className="mt-1">
             &copy; {new Date().getFullYear()} Ask It Right
           </p>
-          <p className="mt-1 text-[#808080] text-xs">
-            Last updated: March 2026
+          <p className="mt-1 text-[#808080] text-sm">
+            Last updated: April 2026
           </p>
         </div>
       </footer>
