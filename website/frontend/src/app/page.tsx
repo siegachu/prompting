@@ -176,6 +176,12 @@ export default function Home() {
                 Ask It Right — Which model, which prompt, best results
               </p>
             </div>
+            <a
+              href="/professional_tools"
+              className="text-sm text-[#b0b0b0] hover:text-white transition-colors hidden sm:block"
+            >
+              Find specialized AI tools just for you →
+            </a>
           </div>
         </div>
 
