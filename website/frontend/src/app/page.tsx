@@ -139,10 +139,10 @@ export default function Home() {
           <p className="text-lg text-[#b0b0b0] mb-6">
             For all questions or comments, please reach out to{" "}
             <a
-              href="mailto:ryan+askairight@rsfundmanagement.com"
+              href="mailto:info@askairight.com"
               className="text-[#f43f5e] hover:underline"
             >
-              ryan+askairight@rsfundmanagement.com
+              info@askairight.com
             </a>
           </p>
           <p className="text-sm text-[#808080]">
@@ -238,8 +238,8 @@ export default function Home() {
           </p>
           <p className="mt-1">
             For comments and questions, reach out to{" "}
-            <a href="mailto:ryan+askairight@rsfundmanagement.com" className="text-[#f43f5e] hover:underline">
-              ryan+askairight@rsfundmanagement.com
+            <a href="mailto:info@askairight.com" className="text-[#f43f5e] hover:underline">
+              info@askairight.com
             </a>
           </p>
           <p className="mt-3 text-[#808080] text-xs">
