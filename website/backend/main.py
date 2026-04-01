@@ -95,8 +95,14 @@ async def pt_get_categories():
 
 
 def _get_top10_for_profession(c, profession_id):
-    """Get 5 most-used tools + 5 unique tools from different categories (10 total)."""
-    # Top 5: best value_add_score, sorted by popularity (most used first)
+    """Get 4 most-used + 1 star pick + 5 unique tools (10 total).
+
+    - Top 4: most popular tools for this profession (lowest popularity_rank)
+    - Star pick: best bridge between popularity and profession-specific value,
+      from a category NOT already in the top 4
+    - Unique 5: high-value profession-specific tools from different categories
+    """
+    # Top 4: sorted by popularity rank
     c.execute("""
         SELECT t.id, t.name, t.category, t.subcategory, t.description,
                t.url, t.pricing, t.pricing_tier,
@@ -108,16 +114,61 @@ def _get_top10_for_profession(c, profession_id):
         GROUP BY t.id
         HAVING m.value_add_score = MAX(m.value_add_score)
         ORDER BY t.popularity_rank ASC, m.value_add_score DESC
-        LIMIT 5
+        LIMIT 4
     """, (profession_id,))
-    top5 = [dict(r) for r in c.fetchall()]
-    top5_ids = {t["id"] for t in top5}
-    top5_categories = {t["category"] for t in top5}
+    top4 = [dict(r) for r in c.fetchall()]
+    top4_ids = {t["id"] for t in top4}
+    top4_categories = {t["category"] for t in top4}
 
-    # Unique 5: from DIFFERENT categories than top 5, sorted by value then popularity
-    if top5_ids:
-        id_ph = ",".join("?" * len(top5_ids))
-        cat_ph = ",".join("?" * len(top5_categories))
+    # Star pick: best bridge score from a different category than top 4
+    # bridge = value_add_score * 100 / (rank + 1), with unranked tools capped at 500
+    if top4_ids:
+        id_ph = ",".join("?" * len(top4_ids))
+        cat_ph = ",".join("?" * len(top4_categories))
+        c.execute(f"""
+            SELECT t.id, t.name, t.category, t.subcategory, t.description,
+                   t.url, t.pricing, t.pricing_tier,
+                   m.use_case, m.automation_potential, m.value_add_score,
+                   t.popularity_rank
+            FROM job_tool_mapping m
+            JOIN ai_tools t ON m.tool_id = t.id
+            WHERE m.job_id = ?
+              AND t.id NOT IN ({id_ph})
+              AND t.category NOT IN ({cat_ph})
+            GROUP BY t.id
+            HAVING m.value_add_score = MAX(m.value_add_score)
+            ORDER BY (m.value_add_score * 100.0 /
+                      (CASE WHEN t.popularity_rank < 9999
+                            THEN t.popularity_rank + 1 ELSE 500 END)) DESC
+            LIMIT 1
+        """, (profession_id, *top4_ids, *top4_categories))
+    else:
+        c.execute("""
+            SELECT t.id, t.name, t.category, t.subcategory, t.description,
+                   t.url, t.pricing, t.pricing_tier,
+                   m.use_case, m.automation_potential, m.value_add_score,
+                   t.popularity_rank
+            FROM job_tool_mapping m
+            JOIN ai_tools t ON m.tool_id = t.id
+            WHERE m.job_id = ?
+            GROUP BY t.id
+            HAVING m.value_add_score = MAX(m.value_add_score)
+            ORDER BY (m.value_add_score * 100.0 /
+                      (CASE WHEN t.popularity_rank < 9999
+                            THEN t.popularity_rank + 1 ELSE 500 END)) DESC
+            LIMIT 1
+        """, (profession_id,))
+    star_row = c.fetchone()
+    star_pick = [dict(star_row)] if star_row else []
+    star_ids = {t["id"] for t in star_pick}
+    star_categories = {t["category"] for t in star_pick}
+
+    # Unique 5: from categories NOT in top4 or star, sorted by value then popularity
+    used_ids = top4_ids | star_ids
+    used_categories = top4_categories | star_categories
+    if used_ids:
+        id_ph = ",".join("?" * len(used_ids))
+        cat_ph = ",".join("?" * len(used_categories))
         c.execute(f"""
             SELECT t.id, t.name, t.category, t.subcategory, t.description,
                    t.url, t.pricing, t.pricing_tier,
@@ -132,7 +183,7 @@ def _get_top10_for_profession(c, profession_id):
             HAVING m.value_add_score = MAX(m.value_add_score)
             ORDER BY m.value_add_score DESC, t.popularity_rank ASC
             LIMIT 5
-        """, (profession_id, *top5_ids, *top5_categories))
+        """, (profession_id, *used_ids, *used_categories))
     else:
         c.execute("""
             SELECT t.id, t.name, t.category, t.subcategory, t.description,
@@ -150,12 +201,14 @@ def _get_top10_for_profession(c, profession_id):
     unique5 = [dict(r) for r in c.fetchall()]
 
     # Tag them
-    for t in top5:
+    for t in top4:
         t["recommendation_type"] = "top"
+    for t in star_pick:
+        t["recommendation_type"] = "star"
     for t in unique5:
         t["recommendation_type"] = "unique"
 
-    return top5 + unique5
+    return top4 + star_pick + unique5
 
 
 @app.get("/professional_tools/api/tools")
