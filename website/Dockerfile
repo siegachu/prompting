@@ -14,7 +14,7 @@ WORKDIR /app
 COPY website/backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend
+# Copy backend (includes templates/ and ai_tools_jobs.db)
 COPY website/backend/ ./backend/
 
 # Copy Next.js static export
