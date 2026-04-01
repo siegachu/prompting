@@ -136,8 +136,9 @@ export default function Home() {
       case "contact": return (
         <div className="max-w-2xl mx-auto text-center py-16">
           <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
+          <h3 className="text-xl text-[#b0b0b0] mb-8">For Consulting Requests</h3>
           <p className="text-lg text-[#b0b0b0] mb-6">
-            For all questions or comments, please reach out to{" "}
+            Reach out to{" "}
             <a
               href="mailto:info@askairight.com"
               className="text-[#f43f5e] hover:underline"
@@ -238,16 +239,6 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-[#2a2a3e] py-6 mt-12">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm text-[#b0b0b0]">
-          <p>
-            Built with insights from MoE research consensus (Claude + Grok +
-            Gemini + DeepSeek + Cerebras)
-          </p>
-          <p className="mt-1">
-            For comments and questions, reach out to{" "}
-            <a href="mailto:info@askairight.com" className="text-[#f43f5e] hover:underline">
-              info@askairight.com
-            </a>
-          </p>
           <p className="mt-3 text-[#808080] text-xs">
             Explore our other sites:{" "}
             <a href="https://quotedtruth.com" className="text-[#b0b0b0] hover:text-white transition">Quoted Truth</a>
