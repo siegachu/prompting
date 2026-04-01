@@ -94,15 +94,17 @@ async def pt_get_categories():
     return [{"category": r["category"], "count": r["cnt"]} for r in rows]
 
 
-def _get_top10_for_profession(c, profession_id):
-    """Get 4 most-used + 1 star pick + 5 unique tools (10 total).
-
-    - Top 4: most popular tools for this profession (lowest popularity_rank)
-    - Star pick: best bridge between popularity and profession-specific value,
-      from a category NOT already in the top 4
-    - Unique 5: high-value profession-specific tools from different categories
+def _get_tools_for_profession(c, profession_id):
+    """Top row: 5 tailored tools (star the one with best airankings popularity).
+    Bottom row: 2 most-used overall + 2 most-used in the job's broad sector.
     """
-    # Top 4: sorted by popularity rank
+    # Get job info for sector
+    c.execute("SELECT title, category FROM jobs WHERE id = ?", (profession_id,))
+    job = c.fetchone()
+    sector = job["category"] if job else None
+
+    # --- TOP ROW: 5 tailored for your role ---
+    # Highest value_add_score = most relevant to profession
     c.execute("""
         SELECT t.id, t.name, t.category, t.subcategory, t.description,
                t.url, t.pricing, t.pricing_tier,
@@ -113,18 +115,23 @@ def _get_top10_for_profession(c, profession_id):
         WHERE m.job_id = ?
         GROUP BY t.id
         HAVING m.value_add_score = MAX(m.value_add_score)
-        ORDER BY t.popularity_rank ASC, m.value_add_score DESC
-        LIMIT 4
+        ORDER BY m.value_add_score DESC, t.popularity_rank ASC
+        LIMIT 5
     """, (profession_id,))
-    top4 = [dict(r) for r in c.fetchall()]
-    top4_ids = {t["id"] for t in top4}
-    top4_categories = {t["category"] for t in top4}
+    tailored = [dict(r) for r in c.fetchall()]
+    tailored_ids = {t["id"] for t in tailored}
 
-    # Star pick: best bridge score from a different category than top 4
-    # bridge = value_add_score * 100 / (rank + 1), with unranked tools capped at 500
-    if top4_ids:
-        id_ph = ",".join("?" * len(top4_ids))
-        cat_ph = ",".join("?" * len(top4_categories))
+    # Star the one with best airankings popularity (lowest popularity_rank)
+    if tailored:
+        best_rank_idx = min(range(len(tailored)),
+                            key=lambda i: tailored[i]["popularity_rank"])
+        for i, t in enumerate(tailored):
+            t["recommendation_type"] = "star" if i == best_rank_idx else "tailored"
+
+    # --- BOTTOM ROW: 2 most-used overall + 2 most-used in sector ---
+    # 2 most-used overall (by popularity_rank, not already in tailored)
+    if tailored_ids:
+        id_ph = ",".join("?" * len(tailored_ids))
         c.execute(f"""
             SELECT t.id, t.name, t.category, t.subcategory, t.description,
                    t.url, t.pricing, t.pricing_tier,
@@ -132,16 +139,12 @@ def _get_top10_for_profession(c, profession_id):
                    t.popularity_rank
             FROM job_tool_mapping m
             JOIN ai_tools t ON m.tool_id = t.id
-            WHERE m.job_id = ?
-              AND t.id NOT IN ({id_ph})
-              AND t.category NOT IN ({cat_ph})
+            WHERE m.job_id = ? AND t.id NOT IN ({id_ph})
             GROUP BY t.id
             HAVING m.value_add_score = MAX(m.value_add_score)
-            ORDER BY (m.value_add_score * 100.0 /
-                      (CASE WHEN t.popularity_rank < 9999
-                            THEN t.popularity_rank + 1 ELSE 500 END)) DESC
-            LIMIT 1
-        """, (profession_id, *top4_ids, *top4_categories))
+            ORDER BY t.popularity_rank ASC
+            LIMIT 2
+        """, (profession_id, *tailored_ids))
     else:
         c.execute("""
             SELECT t.id, t.name, t.category, t.subcategory, t.description,
@@ -153,62 +156,102 @@ def _get_top10_for_profession(c, profession_id):
             WHERE m.job_id = ?
             GROUP BY t.id
             HAVING m.value_add_score = MAX(m.value_add_score)
-            ORDER BY (m.value_add_score * 100.0 /
-                      (CASE WHEN t.popularity_rank < 9999
-                            THEN t.popularity_rank + 1 ELSE 500 END)) DESC
-            LIMIT 1
+            ORDER BY t.popularity_rank ASC
+            LIMIT 2
         """, (profession_id,))
-    star_row = c.fetchone()
-    star_pick = [dict(star_row)] if star_row else []
-    star_ids = {t["id"] for t in star_pick}
-    star_categories = {t["category"] for t in star_pick}
+    most_used = [dict(r) for r in c.fetchall()]
+    most_used_ids = {t["id"] for t in most_used}
+    for t in most_used:
+        t["recommendation_type"] = "popular"
 
-    # Unique 5: from categories NOT in top4 or star, sorted by value then popularity
-    used_ids = top4_ids | star_ids
-    used_categories = top4_categories | star_categories
-    if used_ids:
-        id_ph = ",".join("?" * len(used_ids))
-        cat_ph = ",".join("?" * len(used_categories))
+    # 2 most-used in the same broad sector (other jobs in same category)
+    all_used_ids = tailored_ids | most_used_ids
+    id_ph = ",".join("?" * len(all_used_ids))
+    c.execute(f"""
+        SELECT t.id, t.name, t.category, t.subcategory, t.description,
+               t.url, t.pricing, t.pricing_tier,
+               m.use_case, m.automation_potential, m.value_add_score,
+               t.popularity_rank
+        FROM job_tool_mapping m
+        JOIN ai_tools t ON m.tool_id = t.id
+        JOIN jobs j ON m.job_id = j.id
+        WHERE j.category = ? AND t.id NOT IN ({id_ph})
+        GROUP BY t.id
+        ORDER BY t.popularity_rank ASC, m.value_add_score DESC
+        LIMIT 2
+    """, (sector, *all_used_ids))
+    sector_tools = [dict(r) for r in c.fetchall()]
+    for t in sector_tools:
+        t["recommendation_type"] = "sector"
+        t["sector_name"] = sector
+
+    return tailored + most_used + sector_tools
+
+
+def _get_tools_for_category(c, category):
+    """Top row: 5 most unique/niche tools in this category.
+    Bottom row: 2 most popular overall + 2 broader related tools.
+    """
+    # Top row: unique tools in this category (fewest job mappings = most niche)
+    c.execute("""
+        SELECT t.id, t.name, t.category, t.subcategory, t.description,
+               t.url, t.pricing, t.pricing_tier, t.popularity_rank,
+               (SELECT COUNT(DISTINCT m2.job_id) FROM job_tool_mapping m2
+                WHERE m2.tool_id = t.id) as job_count
+        FROM ai_tools t
+        WHERE t.category = ?
+        ORDER BY job_count ASC, t.popularity_rank ASC
+        LIMIT 5
+    """, (category,))
+    unique_tools = [dict(r) for r in c.fetchall()]
+    unique_ids = {t["id"] for t in unique_tools}
+
+    # Star the one with best airankings popularity
+    if unique_tools:
+        best_rank_idx = min(range(len(unique_tools)),
+                            key=lambda i: unique_tools[i]["popularity_rank"])
+        for i, t in enumerate(unique_tools):
+            t["recommendation_type"] = "star" if i == best_rank_idx else "tailored"
+
+    # Bottom: 2 most popular in this category + 2 from broader/related categories
+    if unique_ids:
+        id_ph = ",".join("?" * len(unique_ids))
         c.execute(f"""
             SELECT t.id, t.name, t.category, t.subcategory, t.description,
-                   t.url, t.pricing, t.pricing_tier,
-                   m.use_case, m.automation_potential, m.value_add_score,
-                   t.popularity_rank
-            FROM job_tool_mapping m
-            JOIN ai_tools t ON m.tool_id = t.id
-            WHERE m.job_id = ?
-              AND t.id NOT IN ({id_ph})
-              AND t.category NOT IN ({cat_ph})
-            GROUP BY t.id
-            HAVING m.value_add_score = MAX(m.value_add_score)
-            ORDER BY m.value_add_score DESC, t.popularity_rank ASC
-            LIMIT 5
-        """, (profession_id, *used_ids, *used_categories))
+                   t.url, t.pricing, t.pricing_tier, t.popularity_rank
+            FROM ai_tools t
+            WHERE t.category = ? AND t.id NOT IN ({id_ph})
+            ORDER BY t.popularity_rank ASC
+            LIMIT 2
+        """, (category, *unique_ids))
     else:
         c.execute("""
             SELECT t.id, t.name, t.category, t.subcategory, t.description,
-                   t.url, t.pricing, t.pricing_tier,
-                   m.use_case, m.automation_potential, m.value_add_score,
-                   t.popularity_rank
-            FROM job_tool_mapping m
-            JOIN ai_tools t ON m.tool_id = t.id
-            WHERE m.job_id = ?
-            GROUP BY t.id
-            HAVING m.value_add_score = MAX(m.value_add_score)
-            ORDER BY m.value_add_score DESC, t.popularity_rank ASC
-            LIMIT 5
-        """, (profession_id,))
-    unique5 = [dict(r) for r in c.fetchall()]
+                   t.url, t.pricing, t.pricing_tier, t.popularity_rank
+            FROM ai_tools t WHERE t.category = ?
+            ORDER BY t.popularity_rank ASC LIMIT 2
+        """, (category,))
+    popular = [dict(r) for r in c.fetchall()]
+    popular_ids = {t["id"] for t in popular}
+    for t in popular:
+        t["recommendation_type"] = "popular"
 
-    # Tag them
-    for t in top4:
-        t["recommendation_type"] = "top"
-    for t in star_pick:
-        t["recommendation_type"] = "star"
-    for t in unique5:
-        t["recommendation_type"] = "unique"
+    # 2 broader tools (most popular from ANY category, not already shown)
+    all_ids = unique_ids | popular_ids
+    id_ph = ",".join("?" * len(all_ids))
+    c.execute(f"""
+        SELECT t.id, t.name, t.category, t.subcategory, t.description,
+               t.url, t.pricing, t.pricing_tier, t.popularity_rank
+        FROM ai_tools t
+        WHERE t.id NOT IN ({id_ph})
+        ORDER BY t.popularity_rank ASC
+        LIMIT 2
+    """, (*all_ids,))
+    broader = [dict(r) for r in c.fetchall()]
+    for t in broader:
+        t["recommendation_type"] = "sector"
 
-    return top4 + star_pick + unique5
+    return unique_tools + popular + broader
 
 
 @app.get("/professional_tools/api/tools")
@@ -221,7 +264,7 @@ async def pt_get_tools(
         c = conn.cursor()
 
         if profession_id:
-            tools = _get_top10_for_profession(c, profession_id)
+            tools = _get_tools_for_profession(c, profession_id)
             total = len(tools)
 
             c.execute("SELECT title, category FROM jobs WHERE id = ?", (profession_id,))
@@ -229,15 +272,9 @@ async def pt_get_tools(
             job_info = {"title": job["title"], "category": job["category"]} if job else None
 
         elif category:
-            c.execute("""
-                SELECT id, name, category, subcategory, description, url, pricing, pricing_tier,
-                       popularity_rank
-                FROM ai_tools WHERE category = ?
-                ORDER BY popularity_rank ASC, name LIMIT 10
-            """, (category,))
-            tools = [dict(r) for r in c.fetchall()]
+            tools = _get_tools_for_category(c, category)
             total = len(tools)
-            job_info = None
+            job_info = {"category_search": category}
 
         elif q:
             search_term = f"%{q}%"
@@ -249,8 +286,7 @@ async def pt_get_tools(
             matching_jobs = [dict(r) for r in c.fetchall()]
 
             if matching_jobs:
-                # Use first matched job for 10-tool recommendation
-                tools = _get_top10_for_profession(c, matching_jobs[0]["id"])
+                tools = _get_tools_for_profession(c, matching_jobs[0]["id"])
                 total = len(tools)
                 job_info = {"matched_jobs": matching_jobs}
             else:
@@ -258,17 +294,16 @@ async def pt_get_tools(
                     SELECT id, name, category, subcategory, description, url, pricing, pricing_tier,
                            popularity_rank
                     FROM ai_tools WHERE name LIKE ? OR description LIKE ? OR category LIKE ?
-                    ORDER BY popularity_rank ASC, name LIMIT 10
+                    ORDER BY popularity_rank ASC, name LIMIT 9
                 """, (search_term, search_term, search_term))
                 tools = [dict(r) for r in c.fetchall()]
                 total = len(tools)
                 job_info = None
         else:
-            # No filter - show top 10 most popular tools
             c.execute("""
                 SELECT id, name, category, subcategory, description, url, pricing, pricing_tier,
                        popularity_rank
-                FROM ai_tools ORDER BY popularity_rank ASC, name LIMIT 10
+                FROM ai_tools ORDER BY popularity_rank ASC, name LIMIT 9
             """)
             tools = [dict(r) for r in c.fetchall()]
             total = len(tools)
@@ -278,7 +313,7 @@ async def pt_get_tools(
         "tools": tools,
         "total": total,
         "page": 1,
-        "limit": 10,
+        "limit": 9,
         "total_pages": 1,
         "job_info": job_info,
     }

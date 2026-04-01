@@ -238,19 +238,19 @@
             <p class="text-sm text-text-secondary mt-1">Our research suggests these could be a great fit for you &mdash; they already have a vast audience</p>
         </div>
 
-        <!-- Section: Most Used (top 4 + star pick) -->
-        <div x-show="!loading && topAndStar.length > 0" class="mb-10 fade-in">
+        <!-- Section: Tailored for Your Role (5 tools) -->
+        <div x-show="!loading && tailoredTools.length > 0" class="mb-10 fade-in">
             <div class="flex items-center gap-2 mb-4">
-                <span class="w-2 h-2 rounded-full bg-accent-amber"></span>
-                <h4 class="text-sm font-semibold text-accent-amber uppercase tracking-wide">Most Used</h4>
+                <span class="w-2 h-2 rounded-full bg-accent-purple"></span>
+                <h4 class="text-sm font-semibold text-accent-purple uppercase tracking-wide">Tailored for Your Role</h4>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <template x-for="tool in topAndStar" :key="'top-' + tool.id">
+                <template x-for="tool in tailoredTools" :key="'tail-' + tool.id">
                     <div class="tool-card rounded-xl p-4 flex flex-col relative"
                          :class="tool.recommendation_type === 'star'
                             ? 'bg-bg-card border-2 border-accent-amber/50 ring-1 ring-accent-amber/20'
                             : 'bg-bg-card border border-border-dark'">
-                        <!-- Star badge for the bridge pick -->
+                        <!-- Star badge -->
                         <div x-show="tool.recommendation_type === 'star'"
                              class="absolute -top-2.5 -right-2.5 w-8 h-8 rounded-full bg-accent-amber text-black flex items-center justify-center shadow-lg">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
@@ -261,12 +261,12 @@
                                  :alt="tool.name + ' icon'"
                                  loading="lazy"
                                  class="w-10 h-10 rounded-lg bg-bg-hover object-contain flex-shrink-0"
-                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%236366f1%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>AI</text></svg>'">
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%237c3aed%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>AI</text></svg>'">
                             <div class="min-w-0">
                                 <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer"
-                                   class="font-semibold text-sm text-text-primary hover:text-accent-indigo truncate block transition"
+                                   class="font-semibold text-sm text-text-primary hover:text-accent-purple truncate block transition"
                                    x-text="tool.name"></a>
-                                <span class="text-xs font-medium" :class="tool.recommendation_type === 'star' ? 'text-accent-amber' : 'text-accent-indigo'" x-text="tool.subcategory || tool.category"></span>
+                                <span class="text-xs font-medium" :class="tool.recommendation_type === 'star' ? 'text-accent-amber' : 'text-accent-purple'" x-text="tool.subcategory || tool.category"></span>
                             </div>
                         </div>
 
@@ -274,56 +274,7 @@
 
                         <div x-show="tool.use_case" class="mb-3">
                             <span class="inline-flex items-center text-xs px-2 py-0.5 rounded-full"
-                                  :class="tool.recommendation_type === 'star' ? 'bg-accent-amber/15 text-accent-amber' : 'bg-accent-indigo/15 text-accent-indigo'">
-                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                <span x-text="tool.use_case"></span>
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-border-dark">
-                            <span class="text-xs font-medium px-2 py-1 rounded-full"
-                                  :class="getPricingClass(tool.pricing_tier || tool.pricing)"
-                                  x-text="formatPricing(tool.pricing_tier || tool.pricing)"></span>
-                            <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer" x-show="tool.url"
-                               class="text-xs font-medium text-accent-indigo hover:text-white flex items-center gap-1 transition">
-                                Visit
-                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </div>
-
-        <!-- Section: Unique Picks -->
-        <div x-show="!loading && uniqueTools.length > 0" class="mb-10 fade-in">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="w-2 h-2 rounded-full bg-accent-purple"></span>
-                <h4 class="text-sm font-semibold text-accent-purple uppercase tracking-wide">Tailored for Your Role</h4>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <template x-for="tool in uniqueTools" :key="'uniq-' + tool.id">
-                    <div class="tool-card bg-bg-card rounded-xl border border-border-dark p-4 flex flex-col">
-                        <div class="flex items-start gap-3 mb-3">
-                            <img :src="getToolIcon(tool.url)"
-                                 :alt="tool.name + ' icon'"
-                                 loading="lazy"
-                                 class="w-10 h-10 rounded-lg bg-bg-hover object-contain flex-shrink-0"
-                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%237c3aed%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>AI</text></svg>'">
-                            <div class="min-w-0">
-                                <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer"
-                                   class="font-semibold text-sm text-text-primary hover:text-accent-purple truncate block transition"
-                                   x-text="tool.name"></a>
-                                <span class="text-xs text-accent-purple font-medium" x-text="tool.subcategory || tool.category"></span>
-                            </div>
-                        </div>
-
-                        <p class="text-xs text-text-secondary leading-relaxed mb-3 flex-1 line-clamp-3" x-text="tool.description || 'AI-powered tool for ' + (tool.category || 'productivity').toLowerCase()"></p>
-
-                        <div x-show="tool.use_case" class="mb-3">
-                            <span class="inline-flex items-center text-xs bg-accent-purple/15 text-accent-purple px-2 py-0.5 rounded-full">
+                                  :class="tool.recommendation_type === 'star' ? 'bg-accent-amber/15 text-accent-amber' : 'bg-accent-purple/15 text-accent-purple'">
                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                 <span x-text="tool.use_case"></span>
                             </span>
@@ -346,8 +297,60 @@
             </div>
         </div>
 
-        <!-- Unsectioned results (category/search without profession) -->
-        <div x-show="!loading && tools.length > 0 && topAndStar.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 fade-in">
+        <!-- Bottom row: 2 most used + 2 sector -->
+        <div x-show="!loading && bottomTools.length > 0" class="mb-10 fade-in">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="w-2 h-2 rounded-full bg-accent-amber"></span>
+                <h4 class="text-sm font-semibold text-accent-amber uppercase tracking-wide">
+                    <span x-show="sectorName">Popular in <span x-text="sectorName"></span> &amp; Beyond</span>
+                    <span x-show="!sectorName">Most Popular</span>
+                </h4>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <template x-for="tool in bottomTools" :key="'bot-' + tool.id">
+                    <div class="tool-card bg-bg-card rounded-xl border border-border-dark p-4 flex flex-col">
+                        <div class="flex items-start gap-3 mb-3">
+                            <img :src="getToolIcon(tool.url)"
+                                 :alt="tool.name + ' icon'"
+                                 loading="lazy"
+                                 class="w-10 h-10 rounded-lg bg-bg-hover object-contain flex-shrink-0"
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%236366f1%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>AI</text></svg>'">
+                            <div class="min-w-0">
+                                <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer"
+                                   class="font-semibold text-sm text-text-primary hover:text-accent-indigo truncate block transition"
+                                   x-text="tool.name"></a>
+                                <span class="text-xs text-accent-indigo font-medium" x-text="tool.subcategory || tool.category"></span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-text-secondary leading-relaxed mb-3 flex-1 line-clamp-3" x-text="tool.description || 'AI-powered tool for ' + (tool.category || 'productivity').toLowerCase()"></p>
+
+                        <div x-show="tool.use_case" class="mb-3">
+                            <span class="inline-flex items-center text-xs bg-accent-indigo/15 text-accent-indigo px-2 py-0.5 rounded-full">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                <span x-text="tool.use_case"></span>
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-border-dark">
+                            <span class="text-xs font-medium px-2 py-1 rounded-full"
+                                  :class="getPricingClass(tool.pricing_tier || tool.pricing)"
+                                  x-text="formatPricing(tool.pricing_tier || tool.pricing)"></span>
+                            <a :href="tool.url || '#'" target="_blank" rel="noopener noreferrer" x-show="tool.url"
+                               class="text-xs font-medium text-accent-indigo hover:text-white flex items-center gap-1 transition">
+                                Visit
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Unsectioned results (generic search without profession/category match) -->
+        <div x-show="!loading && tools.length > 0 && tailoredTools.length === 0 && bottomTools.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 fade-in">
             <template x-for="tool in tools" :key="'all-' + tool.id">
                 <div class="tool-card bg-bg-card rounded-xl border border-border-dark p-4 flex flex-col">
                     <div class="flex items-start gap-3 mb-3">
@@ -444,11 +447,15 @@ function aiToolsFinder() {
         loading: false,
         total: 0,
 
-        get topAndStar() {
-            return this.tools.filter(t => t.recommendation_type === 'top' || t.recommendation_type === 'star');
+        get tailoredTools() {
+            return this.tools.filter(t => t.recommendation_type === 'tailored' || t.recommendation_type === 'star');
         },
-        get uniqueTools() {
-            return this.tools.filter(t => t.recommendation_type === 'unique');
+        get bottomTools() {
+            return this.tools.filter(t => t.recommendation_type === 'popular' || t.recommendation_type === 'sector');
+        },
+        get sectorName() {
+            const s = this.tools.find(t => t.sector_name);
+            return s ? s.sector_name : '';
         },
 
         async init() {
