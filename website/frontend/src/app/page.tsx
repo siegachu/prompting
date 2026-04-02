@@ -1,12 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Overview from "@/components/Overview";
-import ClaudeGuide from "@/components/ClaudeGuide";
-import GeminiGuide from "@/components/GeminiGuide";
-import GrokGuide from "@/components/GrokGuide";
-import ChatGPTGuide from "@/components/ChatGPTGuide";
-import DeepSeekGuide from "@/components/DeepSeekGuide";
 import CLIGuide from "@/components/CLIGuide";
 import Techniques from "@/components/Techniques";
 import PromptBuilder from "@/components/PromptBuilder";
@@ -16,16 +11,20 @@ import ArticleIndex from "@/components/ArticleIndex";
 import ArticleView from "@/components/Articles";
 import { articles } from "@/data/articles";
 
+const toolsDropdownItems = [
+  { id: "zero-shot", label: "Zero-shot", desc: "Simple" },
+  { id: "chain-of-thought", label: "Chain of Thought", desc: "Beginner" },
+  { id: "role-playing", label: "Role-Playing", desc: "Beginner" },
+  { id: "structured-output", label: "Structured Output", desc: "Intermediate" },
+  { id: "constraints", label: "Constraints", desc: "Intermediate" },
+  { id: "few-shot", label: "Few Shot", desc: "Advanced" },
+];
+
 const tabs = [
-  { id: "tools", label: "Tools", color: "#f59e0b" },
+  { id: "tools", label: "Tools", color: "#f59e0b", hasDropdown: true },
   { id: "techniques", label: "Techniques", color: "#f59e0b" },
   { id: "overview", label: "Overview", color: "#e8e8e8" },
   { id: "articles", label: "Articles", color: "#ec4899" },
-  { id: "claude", label: "Claude", color: "#d97706" },
-  { id: "gemini", label: "Gemini", color: "#4285f4" },
-  { id: "grok", label: "Grok", color: "#1da1f2" },
-  { id: "chatgpt", label: "ChatGPT", color: "#10a37f" },
-  { id: "deepseek", label: "DeepSeek", color: "#7c3aed" },
   { id: "cli", label: "CLI Tools", color: "#22c55e" },
   { id: "contact", label: "Contact Us", color: "#f43f5e" },
 ];
@@ -36,6 +35,8 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("tools");
   const [showScrollHint, setShowScrollHint] = useState(false);
   const [articleSlug, setArticleSlug] = useState<string | null>(null);
+  const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Hash routing: read hash on mount
   useEffect(() => {
@@ -79,6 +80,17 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setToolsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // Detect if tab bar is scrollable (mobile hint)
   useEffect(() => {
     const nav = document.getElementById("tab-nav");
@@ -94,11 +106,6 @@ export default function Home() {
     switch (activeTab) {
       case "overview": return <Overview />;
       case "techniques": return <Techniques />;
-      case "claude": return <ClaudeGuide />;
-      case "gemini": return <GeminiGuide />;
-      case "grok": return <GrokGuide />;
-      case "chatgpt": return <ChatGPTGuide />;
-      case "deepseek": return <DeepSeekGuide />;
       case "cli": return <CLIGuide />;
       case "tools": return (
         <div className="space-y-12">
@@ -194,27 +201,81 @@ export default function Home() {
             aria-label="Guide sections"
             className="flex gap-1 overflow-x-auto pb-0 -mb-px scrollbar-hide"
           >
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                role="tab"
-                aria-selected={activeTab === tab.id}
-                aria-controls={`panel-${tab.id}`}
-                onClick={() => switchTab(tab.id)}
-                className={`px-3 sm:px-4 py-2.5 text-sm font-medium whitespace-nowrap rounded-t-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#4285f4] focus:ring-offset-1 focus:ring-offset-[#0d0d0d] ${
-                  activeTab === tab.id
-                    ? "text-white bg-[#1a1a2e]"
-                    : "text-[#b0b0b0] hover:text-white hover:bg-[#141414]"
-                }`}
-                style={
-                  activeTab === tab.id
-                    ? { borderBottom: `2px solid ${tab.color}` }
-                    : {}
-                }
-              >
-                {tab.label}
-              </button>
-            ))}
+            {tabs.map((tab) =>
+              tab.hasDropdown ? (
+                <div key={tab.id} className="relative" ref={dropdownRef}>
+                  <button
+                    role="tab"
+                    aria-selected={activeTab === tab.id}
+                    aria-controls={`panel-${tab.id}`}
+                    aria-haspopup="true"
+                    aria-expanded={toolsDropdownOpen}
+                    onClick={() => {
+                      switchTab(tab.id);
+                      setToolsDropdownOpen(!toolsDropdownOpen);
+                    }}
+                    className={`px-3 sm:px-4 py-2.5 text-sm font-medium whitespace-nowrap rounded-t-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#4285f4] focus:ring-offset-1 focus:ring-offset-[#0d0d0d] flex items-center gap-1 ${
+                      activeTab === tab.id
+                        ? "text-white bg-[#1a1a2e]"
+                        : "text-[#b0b0b0] hover:text-white hover:bg-[#141414]"
+                    }`}
+                    style={
+                      activeTab === tab.id
+                        ? { borderBottom: `2px solid ${tab.color}` }
+                        : {}
+                    }
+                  >
+                    {tab.label}
+                    <svg className={`w-3 h-3 transition-transform ${toolsDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {toolsDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-1 w-64 bg-[#1a1a2e] border border-[#2a2a3e] rounded-lg shadow-xl z-50 py-1">
+                      {toolsDropdownItems.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            switchTab("techniques");
+                            setToolsDropdownOpen(false);
+                            setTimeout(() => {
+                              const el = document.getElementById(item.id);
+                              if (el) {
+                                el.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }
+                            }, 150);
+                          }}
+                          className="w-full text-left px-4 py-2.5 text-sm hover:bg-[#22223a] transition-colors flex items-center justify-between"
+                        >
+                          <span className="text-white">{item.label}</span>
+                          <span className="text-xs text-[#808080]">({item.desc})</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`panel-${tab.id}`}
+                  onClick={() => switchTab(tab.id)}
+                  className={`px-3 sm:px-4 py-2.5 text-sm font-medium whitespace-nowrap rounded-t-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#4285f4] focus:ring-offset-1 focus:ring-offset-[#0d0d0d] ${
+                    activeTab === tab.id
+                      ? "text-white bg-[#1a1a2e]"
+                      : "text-[#b0b0b0] hover:text-white hover:bg-[#141414]"
+                  }`}
+                  style={
+                    activeTab === tab.id
+                      ? { borderBottom: `2px solid ${tab.color}` }
+                      : {}
+                  }
+                >
+                  {tab.label}
+                </button>
+              )
+            )}
           </nav>
           {/* Scroll hint gradient for mobile */}
           {showScrollHint && (

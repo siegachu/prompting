@@ -60,6 +60,7 @@ export default function Techniques() {
       {/* Technique Cards */}
       <section className="space-y-6">
         <TechniqueCard
+          id="zero-shot"
           name="Just Ask (Zero-Shot)"
           effectiveness="Starting point"
           bestFor="Simple questions with clear answers"
@@ -70,6 +71,7 @@ export default function Techniques() {
         />
 
         <TechniqueCard
+          id="chain-of-thought"
           name="Think Step by Step (Chain-of-Thought)"
           effectiveness="+10-20% more accurate"
           bestFor="Math problems, comparing options, planning"
@@ -80,6 +82,7 @@ export default function Techniques() {
         />
 
         <TechniqueCard
+          id="few-shot"
           name="Show Me What You Want (Few-Shot)"
           effectiveness="+15-30% more accurate"
           bestFor="Getting a specific style, format, or tone"
@@ -90,6 +93,7 @@ export default function Techniques() {
         />
 
         <TechniqueCard
+          id="role-playing"
           name="Give It a Role (Persona Prompting)"
           effectiveness="+14-18% on specialized topics"
           bestFor="Getting expert-level answers, matching a specific tone"
@@ -130,6 +134,7 @@ export default function Techniques() {
         />
 
         <TechniqueCard
+          id="structured-output"
           name="Ask for a Specific Format (Structured Output)"
           effectiveness="Consistent, organized answers"
           bestFor="Getting clean data, filling templates, organized lists"
@@ -137,6 +142,17 @@ export default function Techniques() {
           example={`Compare these 3 phones for me in a table with columns:\nPhone Name | Price | Battery Life | Camera Quality | Best For\n\niPhone 16\nSamsung Galaxy S25\nGoogle Pixel 9`}
           doList={["Ask for tables, lists, or specific formats by name", "Paste a template if you have one", "Be specific about what columns, sections, or categories you want"]}
           dontList={["Leave the format up to the AI when you have a preference", "Ask for overly complicated formats with 20 columns", "Forget to mention the format and then complain about the layout"]}
+        />
+
+        <TechniqueCard
+          id="constraints"
+          name="Set Boundaries (Constraints)"
+          effectiveness="+10-25% more focused"
+          bestFor="Keeping answers on topic, limiting scope, controlling length"
+          description="Tell the AI what NOT to do, how long the answer should be, or what to exclude. Constraints narrow the output so you get exactly what you need without filler. Think of it like giving a contractor a budget and a deadline — they make better decisions with boundaries."
+          example={`Write a product description for a standing desk.\n\nConstraints:\n- Maximum 3 sentences\n- No superlatives (no "best," "amazing," "revolutionary")\n- Must mention the price ($449)\n- Don't compare to competitors\n- Write for someone who already knows what a standing desk is`}
+          doList={["Set word or sentence limits", "List things to exclude (topics, words, formats)", "Specify the audience level so it doesn't over-explain", "Combine with other techniques for precision"]}
+          dontList={["Add so many constraints the AI can't answer at all", "Contradict yourself (\"be detailed\" + \"keep it under 50 words\")", "Use vague constraints like \"keep it short\" — say exactly how short"]}
         />
       </section>
 
@@ -207,6 +223,7 @@ export default function Techniques() {
 }
 
 function TechniqueCard({
+  id,
   name,
   effectiveness,
   bestFor,
@@ -215,6 +232,7 @@ function TechniqueCard({
   doList,
   dontList,
 }: {
+  id?: string;
   name: string;
   effectiveness: string;
   bestFor: string;
@@ -224,7 +242,7 @@ function TechniqueCard({
   dontList: string[];
 }) {
   return (
-    <div className="bg-[#1a1a2e] rounded-lg border border-[#2a2a3e] overflow-hidden">
+    <div id={id} className="bg-[#1a1a2e] rounded-lg border border-[#2a2a3e] overflow-hidden scroll-mt-32">
       <div className="p-6">
         <div className="flex flex-wrap items-center gap-3 mb-3">
           <h3 className="text-xl font-bold">{name}</h3>
