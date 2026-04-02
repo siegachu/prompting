@@ -5,7 +5,7 @@ export default function CLIGuide() {
     <div className="space-y-8">
       <section>
         <h2 className="text-3xl font-bold mb-2" style={{ color: "#22c55e" }}>
-          CLI Tools — AI That Works With Your Files
+          CLI (Command Line Interface) Tools — AI That Works With Your Files
         </h2>
         <p className="text-[#b0b0b0]">
           Instead of copying and pasting between a chat window and your files,
