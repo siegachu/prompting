@@ -82,7 +82,7 @@ export default function LearningPaths() {
                         type="checkbox"
                         checked={!!checked[key]}
                         onChange={() => toggle(key)}
-                        className="mt-0.5 accent-[#f59e0b] cursor-pointer"
+                        className="mt-0.5 w-5 h-5 min-w-[20px] accent-[#f59e0b] cursor-pointer"
                       />
                       <a
                         href={`#${item.tab}`}

@@ -394,10 +394,10 @@ if STATIC_DIR.exists():
         if index_path.is_file():
             return FileResponse(index_path)
 
-        # Fallback to root index.html (SPA routing)
-        root_index = STATIC_DIR / "index.html"
-        if root_index.is_file():
-            return FileResponse(root_index)
+        # Serve 404 page for unknown routes
+        not_found_page = STATIC_DIR / "404.html"
+        if not_found_page.is_file():
+            return HTMLResponse(not_found_page.read_text(), status_code=404)
 
         return HTMLResponse("<h1>Not Found</h1>", status_code=404)
 

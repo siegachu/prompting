@@ -5,3 +5,6 @@ __pycache__/
 *.pyc
 .env
 .env.local
+website/scripts/.x_cookies.json
+website/scripts/.x_session/
+website/scripts/x_poster.log

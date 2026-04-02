@@ -2,17 +2,15 @@
 
 import { useState } from "react";
 
-const models = ["Claude", "Gemini", "Grok", "ChatGPT", "DeepSeek"] as const;
-
-const techniques: Record<string, (goal: string, model: string) => string> = {
+const techniques: Record<string, (goal: string) => string> = {
   "Zero-shot": (goal) =>
     `${goal}\n\nProvide a clear, detailed answer.`,
   "Few-shot": (goal) =>
     `Here are examples of good responses:\n\nExample 1: [User asks a clear question] -> [Detailed, structured answer]\nExample 2: [User gives context first] -> [Tailored, specific answer]\n\nNow, following that same quality:\n${goal}`,
   "Chain of Thought": (goal) =>
     `${goal}\n\nThink through this step-by-step:\n1. First, identify the key aspects of the question\n2. Then, analyze each aspect\n3. Finally, synthesize into a complete answer\n\nShow your reasoning at each step.`,
-  "Role-playing": (goal, model) =>
-    `You are an expert consultant with deep knowledge in this area. A client has come to you with the following request:\n\n${goal}\n\nAs a seasoned ${model} expert, provide your professional analysis and recommendations.`,
+  "Role-playing": (goal) =>
+    `You are an expert consultant with deep knowledge in this area. A client has come to you with the following request:\n\n${goal}\n\nProvide your professional analysis and recommendations.`,
   "Structured Output": (goal) =>
     `${goal}\n\nFormat your response as:\n## Summary\n[Brief overview]\n\n## Key Points\n- [Point 1]\n- [Point 2]\n- [Point 3]\n\n## Detailed Analysis\n[In-depth response]\n\n## Recommendations\n[Actionable next steps]`,
   "Constraints": (goal) =>
@@ -21,14 +19,13 @@ const techniques: Record<string, (goal: string, model: string) => string> = {
 
 export default function PromptBuilder() {
   const [goal, setGoal] = useState("");
-  const [model, setModel] = useState<string>(models[0]);
   const [technique, setTechnique] = useState<string>("Zero-shot");
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
   const buildPrompt = () => {
     if (!goal.trim()) return;
-    setOutput(techniques[technique](goal.trim(), model));
+    setOutput(techniques[technique](goal.trim()));
     setCopied(false);
   };
 
@@ -42,7 +39,7 @@ export default function PromptBuilder() {
     <section className="space-y-4">
       <h3 className="text-2xl font-bold">Interactive Prompt Builder</h3>
       <p className="text-[#b0b0b0]">
-        Type your goal, pick a model and technique, and get an improved prompt you can copy and paste.
+        Type your goal, pick a technique, and get an improved prompt you can copy and paste into any AI.
       </p>
 
       <textarea
@@ -53,14 +50,6 @@ export default function PromptBuilder() {
       />
 
       <div className="flex flex-wrap gap-3">
-        <select
-          value={model}
-          onChange={(e) => setModel(e.target.value)}
-          className="px-3 py-2 rounded-lg bg-[#141414] border border-[#2a2a3e] text-white focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
-        >
-          {models.map((m) => <option key={m} value={m}>{m}</option>)}
-        </select>
-
         <select
           value={technique}
           onChange={(e) => setTechnique(e.target.value)}
