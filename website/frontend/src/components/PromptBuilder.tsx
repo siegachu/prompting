@@ -2,11 +2,18 @@
 
 import { useState } from "react";
 
+const techniqueOptions = [
+  { key: "Zero-shot", label: "Zero-shot (Beginner)" },
+  { key: "Chain of Thought", label: "Chain of Thought (Intermediate)" },
+  { key: "Role-playing", label: "Role-Playing (Intermediate)" },
+  { key: "Structured Output", label: "Structured Output (Advanced)" },
+  { key: "Constraints", label: "Constraints (Advanced)" },
+  { key: "Few-shot", label: "Few Shot (Expert)" },
+];
+
 const techniques: Record<string, (goal: string) => string> = {
   "Zero-shot": (goal) =>
     `${goal}\n\nProvide a clear, detailed answer.`,
-  "Few-shot": (goal) =>
-    `Here are examples of good responses:\n\nExample 1: [User asks a clear question] -> [Detailed, structured answer]\nExample 2: [User gives context first] -> [Tailored, specific answer]\n\nNow, following that same quality:\n${goal}`,
   "Chain of Thought": (goal) =>
     `${goal}\n\nThink through this step-by-step:\n1. First, identify the key aspects of the question\n2. Then, analyze each aspect\n3. Finally, synthesize into a complete answer\n\nShow your reasoning at each step.`,
   "Role-playing": (goal) =>
@@ -15,6 +22,8 @@ const techniques: Record<string, (goal: string) => string> = {
     `${goal}\n\nFormat your response as:\n## Summary\n[Brief overview]\n\n## Key Points\n- [Point 1]\n- [Point 2]\n- [Point 3]\n\n## Detailed Analysis\n[In-depth response]\n\n## Recommendations\n[Actionable next steps]`,
   "Constraints": (goal) =>
     `${goal}\n\nConstraints:\n- Be concise (under 300 words)\n- Use simple language (explain as if to a smart 12-year-old)\n- Include at least one concrete example\n- Avoid jargon unless you define it`,
+  "Few-shot": (goal) =>
+    `Here are examples of good responses:\n\nExample 1: [User asks a clear question] -> [Detailed, structured answer]\nExample 2: [User gives context first] -> [Tailored, specific answer]\n\nNow, following that same quality:\n${goal}`,
 };
 
 export default function PromptBuilder() {
@@ -55,7 +64,7 @@ export default function PromptBuilder() {
           onChange={(e) => setTechnique(e.target.value)}
           className="px-3 py-2 rounded-lg bg-[#141414] border border-[#2a2a3e] text-white focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
         >
-          {Object.keys(techniques).map((t) => <option key={t} value={t}>{t}</option>)}
+          {techniqueOptions.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
         </select>
 
         <button
