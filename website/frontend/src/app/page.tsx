@@ -12,12 +12,12 @@ import ArticleView from "@/components/Articles";
 import { articles } from "@/data/articles";
 
 const toolsDropdownItems = [
-  { id: "zero-shot", label: "Zero-shot", desc: "Simple" },
-  { id: "chain-of-thought", label: "Chain of Thought", desc: "Beginner" },
-  { id: "role-playing", label: "Role-Playing", desc: "Beginner" },
-  { id: "structured-output", label: "Structured Output", desc: "Intermediate" },
-  { id: "constraints", label: "Constraints", desc: "Intermediate" },
-  { id: "few-shot", label: "Few Shot", desc: "Advanced" },
+  { id: "zero-shot", label: "Zero-shot", desc: "Beginner" },
+  { id: "chain-of-thought", label: "Chain of Thought", desc: "Intermediate" },
+  { id: "role-playing", label: "Role-Playing", desc: "Intermediate" },
+  { id: "structured-output", label: "Structured Output", desc: "Advanced" },
+  { id: "constraints", label: "Constraints", desc: "Advanced" },
+  { id: "few-shot", label: "Few Shot", desc: "Expert" },
 ];
 
 const tabs = [
